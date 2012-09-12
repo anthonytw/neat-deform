@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Include the HyperNEAT bindings in the Python working directory.
+
+# Run the specified Python script or main.py if none is selected.
+if [ $# -eq 0 ]; then
+    set $@ "main.py"
+fi
+python $@

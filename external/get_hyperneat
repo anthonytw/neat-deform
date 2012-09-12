@@ -1,0 +1,81 @@
+#!/bin/bash
+
+# NOTE: This script is hacky and was tested with Ubuntu 12.04. Also, the libraries required
+# might not be the entire set.
+# YMMV.
+
+echo "Installing required packages..."
+sudo apt-get install build-essentials libwxgtk2.8-dev python-dev cmake libboost-thread-dev libboost-system-dev libboost-filesystem-dev libboost-program-options-dev libboost-test-dev libboost-mpi-dev
+
+#####
+
+echo "Cloning HyperNEAT..."
+git clone git://github.com/MisterTea/HyperNEAT.git
+cd HyperNEAT
+
+#####
+
+echo "Building JGTL..."
+cd JGTL
+mkdir -p build/linux/release
+cd build/linux/release
+cmake -D BOOST_ROOT=/usr/include/boost BOOST_STAGE=stage ../../../
+make
+cd ../../../../
+
+#####
+
+echo "Building zlib..."
+cd zlib
+mkdir -p build/linux/release
+cd build/linux/release
+cmake ../../../
+make
+cd ../../../../
+
+#####
+
+echo "Building tinyxmldll..."
+cd tinyxmldll
+mkdir -p build/linux/release
+cd build/linux/release
+cmake ../../../
+make
+cd ../../../../
+
+#####
+
+echo "Building Board..."
+cd Board
+mkdir -p build/linux/release
+cd build/linux/release
+cmake ../../../
+make
+cd ../../../../
+
+#####
+
+echo "Building Fuego..."
+cd fuego-0.4
+
+echo " - Patching..."
+
+echo " - Building..."
+mkdir -p build/linux/release
+cd build/linux/release
+
+#####
+
+echo "Building HyperNEAT..."
+cd HyperNEAT/NE/HyperNEAT
+
+echo " - Patching for GTK2.0..."
+#NE/HyperNEAT/GoPlayer/CMakeLists.txt:           -D__WXGTK__
+#NE/HyperNEAT/Hypercube_NEAT/CMakeLists.txt:         -D__WXGTK__
+#NE/HyperNEAT/PyHyperNEAT/CMakeLists.txt:    
+
+echo " - Building..."
+mkdir -p build/linux/release
+cd build/linux/release
+cmake -i ../../../
+#make

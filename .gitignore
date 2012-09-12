@@ -1,3 +1,9 @@
+# C++
+# Build artifacts
+*.o
+
+# PYTHON
+# Build artifacts
 *.py[co]
 
 # Packages
