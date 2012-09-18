@@ -14,7 +14,7 @@ sudo apt-get install build-essential libwxgtk2.8-dev python-dev cmake libboost-t
 
 if [ ! -d "HyperNEAT" ]; then
     echo "HyperNEAT directory not found. Cloning HyperNEAT..."
-    #git clone git@github.com:anthonytw/HyperNEAT.git
+    git clone git@github.com:anthonytw/HyperNEAT.git
     #git clone git://github.com/MisterTea/HyperNEAT.git
 else
     echo "HyperNEAT directory found. Git respository will not be cloned."
