@@ -1,12 +1,10 @@
-==============================================================================
--- NEAT Deforms --
+NEAT Deforms
 ==============================================================================
 
-Version 0.0.0.0
-By James Schneider and Anthony Wertz
-- / awertz@knights.ucf.edu
+Version 0.0.0.0  
+By James Schneider and Anthony Wertz  
+N/A / awertz@knights.ucf.edu  
 
-------------------------------------------------------------------------------
 0. Description
 ------------------------------------------------------------------------------
 
@@ -16,7 +14,6 @@ projective transformation due to the camera or pose and applicable to faces in
 general despite differences in dimensions, proportions, shade, etc. between
 individuals.
 
-------------------------------------------------------------------------------
 1. LICENSE
 ------------------------------------------------------------------------------
 
