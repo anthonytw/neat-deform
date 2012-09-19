@@ -1,5 +1,5 @@
 import PyHyperNEAT as neat
-import os
+import os, sys
 from subprocess import call
 from datetime import datetime
 
@@ -7,8 +7,12 @@ start_dir = os.getcwd()
 
 experiment_run_dir  = "../external/HyperNEAT/NE/HyperNEAT/out"
 experiment_data_dir = "data"
-experiment_name     = "Xor3Par"
+experiment_name     = "Xor"
 output_name         = "output"
+
+# Specified experiment in command line arguments?
+if len(sys.argv) == 2:
+    experiment_name = sys.argv[1]
 
 # Move to experiment directory.
 print "Moving to experiment run directory '%s'..." % experiment_run_dir
