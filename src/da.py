@@ -38,15 +38,18 @@ ind = pop.getIndividual( max_fit_id, generations-1 )
 net = ind.spawnFastPhenotypeStack()
 for x1 in xrange(2):
     for x2 in xrange(2):
-        net.reinitialize()
+        for x3 in xrange(2):
+            net.reinitialize()
 
-        net.setValue( "X1", x1 )
-        net.setValue( "X2", x2 )
+            net.setValue( "X1", x1 )
+            net.setValue( "X2", x2 )
+            net.setValue( "X3", x3 )
+            net.setValue( "Bias", 0.3 )
 
-        net.update()
+            net.update()
 
-        output = net.getValue( "Output" )
-        output_int = 1 if output > 0.5 else 0
-        expected_output = x1 ^  x2
+            output = net.getValue( "Output" )
+            output_int = 1 if output > 0.5 else 0
+            expected_output = x1 ^  x2 ^ x3
 
-        print "X1: %d X2: %d | Result: %f/%d Expected: %d" % (x1, x2, output, output_int, expected_output)
+            print "X1: %d X2: %d X3: %d | Result: %f/%d Expected: %d" % (x1, x2, x3, output, output_int, expected_output)
