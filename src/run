@@ -7,4 +7,4 @@ export PYTHONPATH="../external/HyperNEAT/NE/HyperNEAT/out:$PYTHONPATH"
 if [ $# -eq 0 ]; then
     set $@ "" #"main.py"
 fi
-python $@
+ipython $@
