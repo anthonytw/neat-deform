@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Repeat the test a number of times.
+for i in $(seq 1 $2)
+do
+    ./run experiment.py $1 $i
+done

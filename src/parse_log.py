@@ -1,4 +1,4 @@
-import xml.dom.minidom
+import xml.etree.cElementTree
 import PyHyperNEAT as neat
 import gzip
 
@@ -30,21 +30,21 @@ class HyperNEATResults:
 
         # Load XML.
         xml_file = gzip.open( self.filename, 'r' ).read()
-        dom = xml.dom.minidom.parseString( xml_file )
+        tree = xml.etree.cElementTree.fromstring( xml_file )
 
         # Fetch all generations.
-        generations = dom.getElementsByTagName( 'GeneticGeneration' )
+        generations = tree.findall( 'GeneticGeneration' )
         for generation in generations:
             # Only care about the generation number, species count, and
             # average fitness.
-            generation_number = int(generation.getAttribute('GenNumber'))
+            generation_number = int(generation.attrib['GenNumber'])
             if generation_number != on_generation:
                 print "ERROR: Generation discrepency: %d != %d! Missing data?" % (generation_number, on_generation)
 
             self.average_fitness.append(
-                float(generation.getAttribute('AverageFitness')) )
+                float(generation.attrib['AverageFitness']) )
             self.species_count.append(
-                int(generation.getAttribute('SpeciesCount')) )
+                int(generation.attrib['SpeciesCount']) )
 
             on_generation += 1
 
