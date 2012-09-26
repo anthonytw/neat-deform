@@ -9,6 +9,9 @@ output/
 # Build artifacts
 *.py[co]
 
+# Pickled things.
+*.p
+
 # Packages
 *.egg
 *.egg-info

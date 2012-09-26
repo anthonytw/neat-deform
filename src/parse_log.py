@@ -7,8 +7,11 @@ class HyperNEATResults:
         self.filename = filename
 
         self.average_fitness = []
+        self.max_fitness = []
         self.species_count = []
         self.evaluation = []
+        self.node_count = []
+        self.link_count = []
 
         if evaluation_function != None:
             self.refresh( evaluation_function )
@@ -53,6 +56,9 @@ class HyperNEATResults:
 
         # Reset statistics.
         self.evaluation = []
+        self.max_fitness = []
+        self.node_count = []
+        self.link_count = []
 
         # Load population.
         population = neat.loadFromPopulation( self.filename )
@@ -61,6 +67,9 @@ class HyperNEATResults:
         for generation in xrange(population.getGenerationCount()):
            # First individual is always the most fit.
            ind = population.getIndividual( 0, generation )
+           self.max_fitness.append( ind.getFitness() )
+           self.node_count.append( ind.getNodesCount() )
+           self.link_count.append( ind.getLinksCount() )
 
            # Build network.
            net = ind.spawnFastPhenotypeStack()
