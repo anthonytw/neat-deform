@@ -70,6 +70,8 @@ avg_node_count = None
 avg_link_count = None
 for log_file in log_files:
     log = parse_log( "%s%s" % (directory, log_file), evaluate_xor3 )
+    pylab.plot( log.evaluation )
+    pylab.show()
     length = len(log.evaluation)
     if avg_evaluation == None:
         avg_evaluation = zeros(length)
@@ -128,7 +130,7 @@ pylab.ylabel( '% correct' )
 pylab.subplot( 4, 1, 2 )
 pylab.plot( avg_average_fitness )
 pylab.plot( avg_max_fitness )
-pylab.legend( ['Average Fitness', 'Max Fitness'], loc=4 )
+pylab.legend( ['Average Fitness', 'Max Fitness'], loc='lower right' )
 pylab.title( 'Average and max fitness' )
 pylab.ylabel( 'Fitness' )
 
@@ -142,7 +144,7 @@ pylab.ylabel( 'Species Count' )
 pylab.subplot( 4, 1, 4 )
 pylab.plot( avg_node_count )
 pylab.plot( avg_link_count )
-pylab.legend( ['Node Count', 'Link Count'], loc=4 )
+pylab.legend( ['Node Count', 'Link Count'], loc='upper left' )
 pylab.title( 'Gene Size' )
 pylab.ylabel( 'Genes' )
 pylab.xlabel( 'Generations' )
