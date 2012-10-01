@@ -1,10 +1,34 @@
 #!/bin/bash
 
+wx_build_dir=`wx-config --libs | cut -d" " -f1 | sed 's/-L//'`
+echo "Using wxWidgets build directory: $wx_build_dir..."
+
 echo "Building HyperNEAT..."
 cd HyperNEAT/NE/HyperNEAT
 mkdir -p build/linux/release
 cd build/linux/release
-#cmake -D BOARD_INCLUDE=../../../../../Board/include -D BOARD_LIB=../../../../../Board/out -D BOOST_ROOT=/usr/include/boost -D BUILD_GPU=OFF -D BUILD_MPI=OFF -D BUILD_PYTHON=ON -D JGTL_INCLUDE=../../../../../JGTL/include -D PYTHON_INCLUDE=/usr/include/python2.7 -D PYTHON_LIB=/usr/lib/python2.7 -D TINYXMLDLL_INCLUDE=../../../../../tinyxmldll/include -D TINYXMLDLL_LIB=../../../../../tinyxmldll/out -D USE_GUI=YES -D WXWIDGETS_BUILD_INCLUDE_DEBUG=/usr/lib/x86_64-linux-gnu/wx/include/gtk2-unicode-debug-2.8 -D WXWIDGETS_BUILD_INCLUDE_RELEASE=/usr/lib/x86_64-linux-gnu/wx/include/gtk2-unicode-release-2.8 -D WXWIDGETS_DEBUG_LIB=/usr/lib -D WXWIDGETS_INCLUDE=/usr/include/wx-2.8 -D WXWIDGETS_RELEASE_LIB=/usr/lib -D ZLIB_INCLUDE=../../../../../zlib -D ZLIB_LIB=../../../../../zlib/out -D NEAT_DEFORMS_PATH=../../../../../../../src/hyperneat ../../../
+cmake \
+    -D BOARD_INCLUDE=../../../../../Board/include \
+    -D BOARD_LIB=../../../../../Board/out \
+    -D BOOST_ROOT=/usr/include/boost \
+    -D BUILD_GPU=OFF \
+    -D BUILD_MPI=OFF \
+    -D BUILD_PYTHON=ON \
+    -D JGTL_INCLUDE=../../../../../JGTL/include \
+    -D PYTHON_INCLUDE=/usr/include/python2.7 \
+    -D PYTHON_LIB=/usr/lib/python2.7 \
+    -D TINYXMLDLL_INCLUDE=../../../../../tinyxmldll/include \
+    -D TINYXMLDLL_LIB=../../../../../tinyxmldll/out \
+    -D USE_GUI=YES \
+    -D WXWIDGETS_BUILD_INCLUDE_DEBUG=$wx_build_dir/wx/include/gtk2-unicode-debug-2.8 \
+    -D WXWIDGETS_BUILD_INCLUDE_RELEASE=$wx_build_dir/wx/include/gtk2-unicode-release-2.8 \
+    -D WXWIDGETS_DEBUG_LIB=/usr/lib \
+    -D WXWIDGETS_INCLUDE=/usr/include/wx-2.8 \
+    -D WXWIDGETS_RELEASE_LIB=/usr/lib \
+    -D ZLIB_INCLUDE=../../../../../zlib \
+    -D ZLIB_LIB=../../../../../zlib/out \
+    -D NEAT_DEFORMS_PATH=../../../../../../../src/hyperneat \
+    ../../../
 make $@
 cd ../../../../
 
