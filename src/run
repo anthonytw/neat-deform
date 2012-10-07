@@ -5,6 +5,6 @@ export PYTHONPATH="../external/HyperNEAT/NE/HyperNEAT/out:$PYTHONPATH"
 
 # Run the specified Python script or main.py if none is selected.
 if [ $# -eq 0 ]; then
-    set $@ "" #"main.py"
+    set $@ "main.py"
 fi
 ipython $@
