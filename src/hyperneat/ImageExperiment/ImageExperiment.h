@@ -39,6 +39,7 @@ namespace HCUBE
 
 			virtual void resetGenerationData(shared_ptr<NEAT::GeneticGeneration> generation) {}
 			virtual void addGenerationData(shared_ptr<NEAT::GeneticGeneration> generation,shared_ptr<NEAT::GeneticIndividual> individual) {}
+			void processGroupAndSetReward(shared_ptr<NEAT::GeneticGeneration> generation,double reward);
 
 		private:
 		    double calculate_reward( NEAT::FastNetwork<float> & network );
