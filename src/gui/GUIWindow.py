@@ -25,11 +25,9 @@ class Window(QMainWindow):
         # Create the population model.
         pm = PopulationModel( 12 )
         self.population_model = pm
-        pm.set_original_image( QPixmap("birfday_lolcat_h.jpg") )
-        for i in xrange(10):
-            pm.update_item( i, DummyNetwork( DummyNetwork.OneToOne ) )
-        for i in xrange(10, 12):
-            pm.update_item( i, DummyNetwork( DummyNetwork.Flip ) )
+        pm.set_original_image( QPixmap("Homestar.png") )
+        for i in xrange(12):
+            pm.update_item( i, DummyNetwork( i % 4 + 1 ) )
 
         lv.setModel( pm )
 
@@ -45,8 +43,12 @@ class Window(QMainWindow):
         image_layout.addWidget( lbl_image )
 
         # Initialize a horizontal layout for the parameters.
+        gb = QGroupBox( "Evolution Parameters" )
+        gb.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Expanding )
+
         param_layout = QHBoxLayout()
         param_layout.addLayout( image_layout )
+        param_layout.addWidget( gb )
 
         # Initialize vertical central layout.
         central_layout = QVBoxLayout()

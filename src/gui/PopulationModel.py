@@ -7,8 +7,10 @@ import Image
 # Represents a dummy network for testing.
 class DummyNetwork:
     # Network distortion types.
-    OneToOne = 1,
-    Flip     = 2
+    OneToOne = 1
+    HFlip    = 2
+    VFlip    = 3
+    Flip     = 4
 
     def __init__( self, network_type = OneToOne ):
         self.network_type = network_type
@@ -30,8 +32,12 @@ class DummyNetwork:
     def getValue( self, name ):
         if name == 'X_out':
             ret_val = self.x_in
+            if self.network_type == DummyNetwork.HFlip:
+                ret_val = -ret_val
         elif name == 'Y_out':
             ret_val = self.y_in
+            if self.network_type == DummyNetwork.VFlip:
+                ret_val = -ret_val
 
         if self.network_type == DummyNetwork.Flip:
             return -ret_val
@@ -55,7 +61,7 @@ class PopulationItem:
 
     #@profile
     def distort( self, image_map, network ):
-        return QPixmap( QImage(image_map) )
+        #return QPixmap( QImage(image_map) )
         # Convert whatever's sent in to the appropriate image format.
         image = QImage( image_map )
         image.convertToFormat( QImage.Format_RGB32 )
@@ -98,10 +104,6 @@ class PopulationItem:
 
                 x_norm_out = network.getValue( 'X_out' )
                 y_norm_out = network.getValue( 'Y_out' )
-
-                #if (x < 5) and (y < 5):
-                #    print "(%d,%d) -> (%.2f, %.2f) ---> (%.2f, %.2f)" % (
-                #        x, y, x_norm_in, y_norm_in, x_norm_out, y_norm_out)
 
                 # Determine pixel coordinates and clamp to the image boundaries.
                 y_out = y_norm_out * y_norm + y_norm

@@ -38,5 +38,10 @@ pip-log.txt
 # Mr Developer
 .mr.developer.cfg
 
+# LaTeX stuff.
+*.aux
+*.backup
+*.log
+
 # Apple junk.
 .DS_Store
