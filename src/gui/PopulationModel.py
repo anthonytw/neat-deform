@@ -55,7 +55,7 @@ class PopulationItem:
         if network != None:
             self.network = network
 
-        if self.network != None:
+        if (image != None) and (self.network != None):
             self.distorted_image = self.distort( image, self.network )
             self.icon = QIcon(self.distorted_image)
 
@@ -162,9 +162,7 @@ class PopulationModel(QAbstractListModel):
             self.update_item( i )
 
     def update_item( self, index, network = None ):
-        print "Updating item at index %2d... " % index,
         self.population[index].update_distortion( self.original_image, network )
-        print "Finished."
 
     def rowCount( self, parent = QModelIndex() ):
         return len(self.population)
@@ -176,6 +174,6 @@ class PopulationModel(QAbstractListModel):
         if role == Qt.DecorationRole:
             return self.population[index.row()].get_icon( )
         elif role == Qt.SizeHintRole:
-            return QSize(180, 180)
+            return QSize(120, 120)
         else:
             return QVariant()
