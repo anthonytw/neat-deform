@@ -12,7 +12,9 @@ namespace HCUBE
 			virtual ~ImageExperiment() { }
 
 			virtual NEAT::GeneticPopulation* createInitialPopulation(int populationSize);
+
 			virtual void processGroup(shared_ptr<NEAT::GeneticGeneration> generation);
+
 			virtual void processIndividualPostHoc(shared_ptr<NEAT::GeneticIndividual> individual);
 
 			virtual bool performUserEvaluations()
@@ -38,8 +40,10 @@ namespace HCUBE
 			virtual Experiment * clone();
 
 			virtual void resetGenerationData(shared_ptr<NEAT::GeneticGeneration> generation) {}
+
 			virtual void addGenerationData(shared_ptr<NEAT::GeneticGeneration> generation,shared_ptr<NEAT::GeneticIndividual> individual) {}
-			void processGroupAndSetReward(shared_ptr<NEAT::GeneticGeneration> generation,double reward);
+
+			void setReward(shared_ptr<NEAT::GeneticIndividual> individual,double reward) {}
 
 		private:
 		    double calculate_reward( NEAT::FastNetwork<float> & network );

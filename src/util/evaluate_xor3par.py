@@ -69,7 +69,7 @@ avg_species_count = None
 avg_node_count = None
 avg_link_count = None
 for log_file in log_files:
-    log = parse_log( "%s%s" % (directory, log_file), evaluate_xor3 )
+    log = parse_log( "%s%s" % (directory, log_file), evaluate_xor2 )
     pylab.plot( log.evaluation )
     pylab.show()
     length = len(log.evaluation)

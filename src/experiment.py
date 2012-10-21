@@ -2,7 +2,27 @@ import PyHyperNEAT as neat
 import os, sys
 from subprocess import call
 from datetime import datetime
-from random import randint
+import random
+
+def evaluate_xor2( net ):
+    num_evals = 2**2
+    passed_evals = 0
+    for x1 in xrange(2):
+        for x2 in xrange(2):
+            net.reinitialize()
+
+            net.setValue( 'X1', x1 )
+            net.setValue( 'X2', x2 )
+            net.setValue( 'Bias', 0.3 )
+
+            net.update()
+
+            output = 1 if net.getValue( 'Output' ) > 0.5 else 0
+            expected_output = x1 ^ x2
+
+            if output == expected_output:
+                passed_evals += 1
+    return 100.0 * passed_evals / float(num_evals)
 
 start_dir = os.getcwd()
 
@@ -31,11 +51,11 @@ neat.initializeHyperNEAT()
 
 # Load experiment.
 print "Running HyperNEAT experiment '%s'..." % experiment_name
-neat.setupExperiment( "%s/%sExperiment.dat" % (experiment_data_dir, experiment_name), "%s.xml" % output_name )
+#neat.setupExperiment( "%s/%sExperiment.dat" % (experiment_data_dir, experiment_name), "%s.xml" % output_name )
+
+experimentRun = neat.Py_Experiment("%s/%sExperiment.dat" % (experiment_data_dir, experiment_name), "%s.xml" % output_name )
 
 maxgen = neat.getMaximumGenerations()
-
-experimentRun = neat.Py_Experiment()
 
 for x in range(maxgen):
     
@@ -45,22 +65,24 @@ for x in range(maxgen):
     #population pre-process, in experiment running
     experimentRun.preprocessPopulation()
     
+    #vector = neat.GeneticIndividualVector()
+    
     #evaluation run subclass from experiment run
-    evalRun = experimentRun.pythonEvaluationSet()
-    
-    #genetic gen object
-    geneticPop = evalRun.runPython()
-    
-    #experiment object
-    experiment = evalRun.getExperimentObject()
-    
-    #the actual image experiment genetic gen object, reward
-    #This reward can be change to image reward
-    reward = randint(0,10)
-    #take the 0th member of the genetic generation object, this will be passed to network to spawn a new network
-    #then the network will be evaluated like the XOR experiment
-    #the output will display to the user and they will upvote/downvote the picture
-    #experiment.processGroupAndSetReward(geneticPop,reward)
+    geneticIndividuals = experimentRun.pythonEvaluationSet()
+
+    for generation in xrange(geneticIndividuals.getIndividualCount()):
+        
+        ind = geneticIndividuals.getIndividual( generation )
+        
+        net = ind.spawnFastPhenotypeStack()
+        
+        reward_value = evaluate_xor2(net)
+        
+        ind.reward(reward_value)
+        
+    #geneticIndividuals.sortByFitness()
+        
+    #geneticIndividuals.cleanup()
     
     experimentRun.finishEvaluations()
 

@@ -56,6 +56,10 @@ namespace HCUBE
 	        cout << "POST HOC ANALYSIS: " << reward << "/" << max_reward << endl;
 	    }
 
+	    void setReward(shared_ptr<NEAT::GeneticIndividual> generation,double reward){
+	    	generation->reward(reward);
+	    }
+
 	    Experiment* ImageExperiment::clone()
 	    {
 	        ImageExperiment * experiment = new ImageExperiment(*this);
