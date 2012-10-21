@@ -32,11 +32,15 @@ experiment_name     = "Xor"
 experiment_number   = 1
 output_name         = "output"
 
+print "%s - %d" % (experiment_name, experiment_number)
+
 # Specified experiment in command line arguments?
 if len(sys.argv) >= 2:
     experiment_name = sys.argv[1]
 if len(sys.argv) >= 3:
     experiment_number = int(sys.argv[2])
+
+print "%s - %d" % (experiment_name, experiment_number)
 
 # Experiment prefix.
 prefix = datetime.now().strftime("%y%m%d_%H%M%S")
@@ -51,40 +55,41 @@ neat.initializeHyperNEAT()
 
 # Load experiment.
 print "Running HyperNEAT experiment '%s'..." % experiment_name
-#neat.setupExperiment( "%s/%sExperiment.dat" % (experiment_data_dir, experiment_name), "%s.xml" % output_name )
-
-experimentRun = neat.Py_Experiment("%s/%sExperiment.dat" % (experiment_data_dir, experiment_name), "%s.xml" % output_name )
+experimentRun = neat.setupExperiment( "%s/%sExperiment.dat" % (experiment_data_dir, experiment_name), "%s.xml" % output_name )
 
 maxgen = neat.getMaximumGenerations()
 
 for x in range(maxgen):
-    
+
     if(x > 0):
         experimentRun.produceNextGeneration()
-        
+
     #population pre-process, in experiment running
     experimentRun.preprocessPopulation()
-    
+
     #vector = neat.GeneticIndividualVector()
-    
+
     #evaluation run subclass from experiment run
     geneticIndividuals = experimentRun.pythonEvaluationSet()
 
     for generation in xrange(geneticIndividuals.getIndividualCount()):
-        
+
         ind = geneticIndividuals.getIndividual( generation )
-        
+
         net = ind.spawnFastPhenotypeStack()
-        
+
         reward_value = evaluate_xor2(net)
-        
+
         ind.reward(reward_value)
-        
+
     #geneticIndividuals.sortByFitness()
-        
+
     #geneticIndividuals.cleanup()
-    
+
     experimentRun.finishEvaluations()
+
+# Store the output file.
+experimentRun.saveBest()
 
 # Cleanup.
 print "Cleaning up..."
