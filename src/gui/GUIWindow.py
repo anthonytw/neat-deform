@@ -89,7 +89,7 @@ class Window(QMainWindow):
         self.date_specifier = datetime.now().strftime("%y%m%d_%H%M%S")
 
         # Initialize HyperNEAT.
-        neat.initializeHyperNEAT()
+        neat.initialize()
 
         # Load the image experiment.
         self.experiment = neat.setupExperiment(
@@ -111,7 +111,7 @@ class Window(QMainWindow):
         self.experiment.saveBest()
 
         # Cleanup HyperNEAT.
-        neat.cleanupHyperNEAT()
+        neat.cleanup()
 
     # Choose a new image to work with.
     def select_image( self, file_name = None ):
