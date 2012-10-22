@@ -21,20 +21,20 @@ class DummyNetwork:
         pass
 
     def setValue( self, name, value ):
-        if name == 'X_in':
+        if name == 'X':
             self.x_in = float(value)
-        elif name == 'Y_in':
+        elif name == 'Y':
             self.y_in = float(value)
 
     def update( self ):
         pass
 
     def getValue( self, name ):
-        if name == 'X_out':
+        if name == 'XOUT':
             ret_val = self.x_in
             if self.network_type == DummyNetwork.HFlip:
                 ret_val = -ret_val
-        elif name == 'Y_out':
+        elif name == 'YOUT':
             ret_val = self.y_in
             if self.network_type == DummyNetwork.VFlip:
                 ret_val = -ret_val
@@ -97,13 +97,13 @@ class PopulationItem:
 
                 # Evaluate network.
                 network.reinitialize( )
-                network.setValue( 'X_in', x_norm_in )
-                network.setValue( 'Y_in', y_norm_in )
+                network.setValue( 'X', x_norm_in )
+                network.setValue( 'Y', y_norm_in )
                 network.setValue( 'Bias', 1.0 )
                 network.update( )
 
-                x_norm_out = network.getValue( 'X_out' )
-                y_norm_out = network.getValue( 'Y_out' )
+                x_norm_out = network.getValue( 'XOUT' )
+                y_norm_out = network.getValue( 'YOUT' )
 
                 # Determine pixel coordinates and clamp to the image boundaries.
                 y_out = y_norm_out * y_norm + y_norm

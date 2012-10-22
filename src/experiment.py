@@ -2,7 +2,6 @@ import PyHyperNEAT as neat
 import os, sys
 from subprocess import call
 from datetime import datetime
-import random
 
 def evaluate_xor2( net ):
     num_evals = 2**2
