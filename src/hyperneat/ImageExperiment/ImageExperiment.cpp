@@ -17,6 +17,7 @@ namespace HCUBE
 	        genes.push_back(GeneticNodeGene("Bias", "NetworkSensor",     0, false, ACTIVATION_FUNCTION_SIGMOID));
 	        genes.push_back(GeneticNodeGene("X",    "NetworkSensor",     0, false, ACTIVATION_FUNCTION_SIGMOID));
 	        genes.push_back(GeneticNodeGene("Y",    "NetworkSensor",     0, false, ACTIVATION_FUNCTION_SIGMOID));
+            genes.push_back(GeneticNodeGene("Gauss","HiddenNode",      0.5, false, ACTIVATION_FUNCTION_GAUSSIAN));
 	        genes.push_back(GeneticNodeGene("XOUT", "NetworkOutputNode", 1, false, ACTIVATION_FUNCTION_SIGMOID));
 	        genes.push_back(GeneticNodeGene("YOUT", "NetworkOutputNode", 1, false, ACTIVATION_FUNCTION_SIGMOID));
 
