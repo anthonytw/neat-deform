@@ -12,7 +12,7 @@ class Window(QMainWindow):
         ### GUI Configuration
 
         # Set default window size.
-        self.setFixedSize( 545, 600 )
+        self.setFixedSize( 545, 700 )
 
         # Initialize the list view for the distorted images.
         lv = QListView( )
@@ -57,6 +57,17 @@ class Window(QMainWindow):
         gb = QGroupBox( "Evolution Parameters" )
         gb.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Expanding )
 
+        tw = QTableWidget( 1, 2 )
+        tw.setHorizontalHeaderLabels(QString("Parameter;Value").split(';'))
+        tw.setColumnWidth( 0, 200 )
+        tw.horizontalHeader().setStretchLastSection( True )
+        self.connect( tw, SIGNAL('itemChanged(QTableWidgetItem *)'), self.handle_parameter_change )
+        self.parameter_table = tw
+
+        tw_layout = QVBoxLayout()
+        tw_layout.addWidget( tw )
+        gb.setLayout( tw_layout )
+
         param_layout = QHBoxLayout()
         param_layout.addLayout( image_layout )
         param_layout.addWidget( gb )
@@ -96,6 +107,17 @@ class Window(QMainWindow):
             "%s/ImageExperiment.dat" % self.experiment_data_dir,
             "output/imageExp_out_%s.xml" % self.date_specifier )
 
+        # Grab the global parameters.
+        self.globals = neat.getGlobalParameters()
+        parameter_count = self.globals.getParameterCount()
+        tw.setRowCount( parameter_count )
+        for p in xrange(parameter_count):
+            parameter_name = self.globals.getParameterName( p )
+            tw.model().setData( tw.model().index( p, 0 ), parameter_name )
+            tw.model().setData( tw.model().index( p, 1 ), self.globals.getParameterValue( parameter_name ) )
+            index = tw.item( p, 0 )
+            index.setFlags( index.flags() ^ Qt.ItemIsEditable )
+
         # Generate first population.
         self.get_next_generation( initializing=True )
 
@@ -112,6 +134,19 @@ class Window(QMainWindow):
 
         # Cleanup HyperNEAT.
         neat.cleanup()
+
+    # Update a parameter value.
+    def handle_parameter_change( self, parameter ):
+        column = parameter.column()
+        if column == 1:
+            row = parameter.row()
+            parameter_name = self.globals.getParameterName( row )
+            current_value = self.globals.getParameterValue( parameter_name )
+            (new_value, is_a_float) = parameter.data(Qt.EditRole).toFloat()
+            if is_a_float:
+                self.globals.setParameterValue( parameter_name, new_value )
+            else:
+                parameter.setText( "%.2f" % current_value )
 
     # Choose a new image to work with.
     def select_image( self, file_name = None ):
