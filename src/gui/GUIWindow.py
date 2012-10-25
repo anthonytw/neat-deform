@@ -10,10 +10,30 @@ class Window(QMainWindow):
     def __init__( self, parent = None ):
         super(Window, self).__init__( parent )
 
+        ### Experiment Configuration
+        # ATW: TODO: When we start getting reasonable distortions, there
+        # needs to be a method to reload an old population. For now we'll
+        # always make a new one.
+
+        self.experiment_data_dir  = "../external/HyperNEAT/NE/HyperNEAT/out/data"
+        self.date_specifier = datetime.now().strftime("%y%m%d_%H%M%S")
+
+        # Initialize HyperNEAT.
+        neat.initialize()
+
+        # Load the image experiment.
+        self.experiment = neat.setupExperiment(
+            "%s/ImageExperiment.dat" % self.experiment_data_dir,
+            "output/imageExp_out_%s.xml" % self.date_specifier )
+
+        # Grab the global parameters.
+        self.globals = neat.getGlobalParameters()
+        population_size = int(self.globals.getParameterValue('PopulationSize'))
+
         ### GUI Configuration
 
         # Set default window size.
-        self.setFixedSize( 545, 700 )
+        self.setFixedSize( 670, 700 )
 
         # Initialize the list view for the distorted images.
         lv = QListView( )
@@ -33,12 +53,12 @@ class Window(QMainWindow):
         #pop-up menu
         lv.setContextMenuPolicy(Qt.CustomContextMenu)
         lv.connect(lv, SIGNAL('customContextMenuRequested (const QPoint&)'),self.onContext)
-        
+
         # Create the population model.
-        pm = PopulationModel( 12 )
+        pm = PopulationModel( population_size )
         self.population_model = pm
         lv.setModel( pm )
-        for i in xrange(12):
+        for i in xrange(population_size):
             self.population_model.update_item( i, DummyNetwork( i % 4 + 1 ) )
 
         # Monitor population list selection changes.
@@ -64,7 +84,7 @@ class Window(QMainWindow):
 
         tw = QTableWidget( 1, 2 )
         tw.setHorizontalHeaderLabels(QString("Parameter;Value").split(';'))
-        tw.setColumnWidth( 0, 200 )
+        tw.setColumnWidth( 0, 350 )
         tw.horizontalHeader().setStretchLastSection( True )
         self.connect( tw, SIGNAL('itemChanged(QTableWidgetItem *)'), self.handle_parameter_change )
         self.parameter_table = tw
@@ -76,6 +96,16 @@ class Window(QMainWindow):
         param_layout = QHBoxLayout()
         param_layout.addLayout( image_layout )
         param_layout.addWidget( gb )
+
+        # Grab the global parameters.
+        parameter_count = self.globals.getParameterCount()
+        tw.setRowCount( parameter_count )
+        for p in xrange(parameter_count):
+            parameter_name = self.globals.getParameterName( p )
+            tw.model().setData( tw.model().index( p, 0 ), parameter_name )
+            tw.model().setData( tw.model().index( p, 1 ), self.globals.getParameterValue( parameter_name ) )
+            index = tw.item( p, 0 )
+            index.setFlags( index.flags() ^ Qt.ItemIsEditable )
 
         # Initialize a horizontal layout for the evolve button.
         btn_evolve = QPushButton( "Evolve" )
@@ -96,41 +126,14 @@ class Window(QMainWindow):
 
         self.setCentralWidget( central_widget )
 
-        ### Experiment Configuration
-        # ATW: TODO: When we start getting reasonable distortions, there
-        # needs to be a method to reload an old population. For now we'll
-        # always make a new one.
-
-        self.experiment_data_dir  = "../external/HyperNEAT/NE/HyperNEAT/out/data"
-        self.date_specifier = datetime.now().strftime("%y%m%d_%H%M%S")
-
-        # Initialize HyperNEAT.
-        neat.initialize()
-
-        # Load the image experiment.
-        self.experiment = neat.setupExperiment(
-            "%s/ImageExperiment.dat" % self.experiment_data_dir,
-            "output/imageExp_out_%s.xml" % self.date_specifier )
-
-        # Grab the global parameters.
-        self.globals = neat.getGlobalParameters()
-        parameter_count = self.globals.getParameterCount()
-        tw.setRowCount( parameter_count )
-        for p in xrange(parameter_count):
-            parameter_name = self.globals.getParameterName( p )
-            tw.model().setData( tw.model().index( p, 0 ), parameter_name )
-            tw.model().setData( tw.model().index( p, 1 ), self.globals.getParameterValue( parameter_name ) )
-            index = tw.item( p, 0 )
-            index.setFlags( index.flags() ^ Qt.ItemIsEditable )
-
-        # Generate first population.
-        self.get_next_generation( initializing=True )
-
         ### Initialization
 
         # Handle command line parameters.
         if len(sys.argv) >= 2:
             self.select_image(sys.argv[1])
+
+        # Generate first population.
+        self.get_next_generation( initializing=True )
 
     # Destructor.
     def __del__( self ):
@@ -211,8 +214,8 @@ class Window(QMainWindow):
 
         # Get next generation.
         self.get_next_generation()
-        
-    
+
+
     def onContext(self,point):
        # Create a menu
        menu = QMenu("Menu", self)
@@ -221,4 +224,4 @@ class Window(QMainWindow):
        action = menu.exec_(self.population_list.mapToGlobal(point))
        if action ==save_image:
            self.population_model.save_image(self.population_list.selectionModel().selectedRows())
-           
+

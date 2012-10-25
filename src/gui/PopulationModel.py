@@ -179,20 +179,16 @@ class PopulationModel(QAbstractListModel):
             return QSize(120, 120)
         else:
             return QVariant()
-        
+
     def save_image(self, indices):
         image_path = os.getcwd + "/savedimages/"
-        
+
         if not os.path.exists(image_path):
             os.mkdir(image_path)
-            
+
         for index in indices:
             fileloc = image_path + str(self.image_number)
             image = QImage( self.population[index.row()].get_distorted_image() )
             image.convertToFormat( QImage.Format_RGB32 )
             image.save(fileloc, 'PNG')
             self.image_number += 1
-            
-        
-        
-        
