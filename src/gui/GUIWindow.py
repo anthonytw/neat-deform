@@ -1,4 +1,5 @@
 from PyQt4.QtGui import *
+from PyQt4.QtCore import *
 from PopulationModel import *
 import os.path
 import sys
@@ -29,6 +30,10 @@ class Window(QMainWindow):
         lv.setEnabled( False )
         self.population_list = lv
 
+        #pop-up menu
+        lv.setContextMenuPolicy(Qt.CustomContextMenu)
+        lv.connect(lv, SIGNAL('customContextMenuRequested (const QPoint&)'),self.onContext)
+        
         # Create the population model.
         pm = PopulationModel( 12 )
         self.population_model = pm
@@ -206,3 +211,14 @@ class Window(QMainWindow):
 
         # Get next generation.
         self.get_next_generation()
+        
+    
+    def onContext(self,point):
+       # Create a menu
+       menu = QMenu("Menu", self)
+       save_image = menu.addAction("Save Selected Images")
+       # Show the context menu.
+       action = menu.exec_(self.population_list.mapToGlobal(point))
+       if action ==save_image:
+           self.population_model.save_image(self.population_list.selectionModel().selectedRows())
+           

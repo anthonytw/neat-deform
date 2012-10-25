@@ -6,7 +6,32 @@ namespace HCUBE
 {
 	ImageExperiment::ImageExperiment(string _experimentName,int _threadID) :
         Experiment(_experimentName,_threadID)
-    { }
+    {
+	/*layerInfo = NEAT::LayeredSubstrateInfo();
+
+    //Piece input layer (a)
+    layerInfo.layerSizes.push_back(JGTL::Vector2<int>(1024,1));
+    layerInfo.layerValidSizes.push_back(JGTL::Vector2<int>(1024,1));
+    layerInfo.layerNames.push_back("Input");
+    layerInfo.layerIsInput.push_back(true);
+    layerInfo.layerLocations.push_back(JGTL::Vector3<float>(0,0,0));
+
+    //OutputLayer (e)
+    layerInfo.layerSizes.push_back(JGTL::Vector2<int>(1,1));
+    layerInfo.layerValidSizes.push_back(JGTL::Vector2<int>(1,1));
+    layerInfo.layerNames.push_back("Output");
+    layerInfo.layerIsInput.push_back(false);
+    layerInfo.layerLocations.push_back(JGTL::Vector3<float>(0,8,0));
+
+    //inputs connect to hidden
+    layerInfo.layerAdjacencyList.push_back(std::pair<string,string>("Input","Output"));
+
+    layerInfo.normalize = true;
+    layerInfo.useOldOutputNames = false;
+
+    substrate = NEAT::LayeredSubstrate<float>();
+    substrate.setLayerInfo(layerInfo);*/
+    }
 
 	NEAT::GeneticPopulation * ImageExperiment::createInitialPopulation(int populationSize)
 	    {
@@ -14,10 +39,10 @@ namespace HCUBE
 	        GeneticPopulation *population = new GeneticPopulation();
 	        vector<GeneticNodeGene> genes;
 
-	        genes.push_back(GeneticNodeGene("Bias", "NetworkSensor",     0, false, ACTIVATION_FUNCTION_SIGMOID));
-	        genes.push_back(GeneticNodeGene("X",    "NetworkSensor",     0, false, ACTIVATION_FUNCTION_SIGMOID));
-	        genes.push_back(GeneticNodeGene("Y",    "NetworkSensor",     0, false, ACTIVATION_FUNCTION_SIGMOID));
-            genes.push_back(GeneticNodeGene("Gauss","HiddenNode",      0.5, false, ACTIVATION_FUNCTION_GAUSSIAN));
+	        genes.push_back(GeneticNodeGene("Bias", "NetworkSensor",     0, false));
+	        genes.push_back(GeneticNodeGene("X",    "NetworkSensor",     0, false));
+	        genes.push_back(GeneticNodeGene("Y",    "NetworkSensor",     0, false));
+            //genes.push_back(GeneticNodeGene("Gauss","HiddenNode",      0.5, false, ACTIVATION_FUNCTION_GAUSSIAN));
 	        genes.push_back(GeneticNodeGene("XOUT", "NetworkOutputNode", 1, false, ACTIVATION_FUNCTION_SIGMOID));
 	        genes.push_back(GeneticNodeGene("YOUT", "NetworkOutputNode", 1, false, ACTIVATION_FUNCTION_SIGMOID));
 

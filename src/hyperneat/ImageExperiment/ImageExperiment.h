@@ -48,6 +48,11 @@ namespace HCUBE
 		private:
 		    double calculate_reward( NEAT::FastNetwork<float> & network );
 
+		protected:
+		   /* NEAT::LayeredSubstrate<float> substrate;
+		    shared_ptr<const NEAT::GeneticIndividual> substrateIndividual;
+		    NEAT::LayeredSubstrateInfo layerInfo;*/
+
 	};
 }
 

@@ -3,6 +3,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import cStringIO
 import Image
+import os
 
 # Represents a dummy network for testing.
 class DummyNetwork:
@@ -99,7 +100,7 @@ class PopulationItem:
                 network.reinitialize( )
                 network.setValue( 'X', x_norm_in )
                 network.setValue( 'Y', y_norm_in )
-                network.setValue( 'Bias', 1.0 )
+                network.setValue( 'Bias', .5 )
                 network.update( )
 
                 x_norm_out = network.getValue( 'XOUT' )
@@ -152,6 +153,7 @@ class PopulationItem:
 class PopulationModel(QAbstractListModel):
     def __init__( self, population_size, parent = None ):
         super(PopulationModel, self).__init__( parent )
+        self.image_number = 0
         self.population_size = population_size
         self.original_image = None
         self.population = [PopulationItem() for x in xrange(self.population_size)]
@@ -177,3 +179,20 @@ class PopulationModel(QAbstractListModel):
             return QSize(120, 120)
         else:
             return QVariant()
+        
+    def save_image(self, indices):
+        image_path = os.getcwd + "/savedimages/"
+        
+        if not os.path.exists(image_path):
+            os.mkdir(image_path)
+            
+        for index in indices:
+            fileloc = image_path + str(self.image_number)
+            image = QImage( self.population[index.row()].get_distorted_image() )
+            image.convertToFormat( QImage.Format_RGB32 )
+            image.save(fileloc, 'PNG')
+            self.image_number += 1
+            
+        
+        
+        
