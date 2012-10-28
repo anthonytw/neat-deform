@@ -4,6 +4,7 @@ from PyQt4.QtGui import *
 import cStringIO
 import Image
 import os
+import sys
 
 # Represents a dummy network for testing.
 class DummyNetwork:
@@ -181,8 +182,10 @@ class PopulationModel(QAbstractListModel):
             return QVariant()
 
     def save_image(self, indices):
-        image_path = os.getcwd + "/savedimages/"
-
+        image_path = os.getcwd() + "/savedimages/"
+        
+        sys.stdout.write("Saving Images...")
+        
         if not os.path.exists(image_path):
             os.mkdir(image_path)
 
@@ -192,3 +195,5 @@ class PopulationModel(QAbstractListModel):
             image.convertToFormat( QImage.Format_RGB32 )
             image.save(fileloc, 'PNG')
             self.image_number += 1
+        
+        sys.stdout.write("Images Saved\n")

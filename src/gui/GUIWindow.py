@@ -21,6 +21,10 @@ class Window(QMainWindow):
         # Initialize HyperNEAT.
         neat.initialize()
 
+        #see if there is an output directory
+        if not os.path.exists(os.getcwd() + "/output"):
+            os.mkdir(os.getcwd() + "/output")
+            
         # Load the image experiment.
         self.experiment = neat.setupExperiment(
             "%s/ImageExperiment.dat" % self.experiment_data_dir,
@@ -220,8 +224,11 @@ class Window(QMainWindow):
        # Create a menu
        menu = QMenu("Menu", self)
        save_image = menu.addAction("Save Selected Images")
+       save_network = menu.addAction("Save Selected Neural Network")
        # Show the context menu.
        action = menu.exec_(self.population_list.mapToGlobal(point))
-       if action ==save_image:
+       if action == save_image:
            self.population_model.save_image(self.population_list.selectionModel().selectedRows())
+       elif action ==  save_network:
+           self.experiment.saveBest()
 

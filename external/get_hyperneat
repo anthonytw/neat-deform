@@ -27,8 +27,8 @@ echo "Building JGTL..."
 cd JGTL
 mkdir -p build/linux/release
 cd build/linux/release
-#cmake -D BOOST_ROOT=/usr/include/boost BOOST_STAGE=stage ../../../
-#make
+cmake -D BOOST_ROOT=/usr/include/boost BOOST_STAGE=stage ../../../
+make
 cd ../../../../
 
 #####
@@ -37,8 +37,8 @@ echo "Building zlib..."
 cd zlib
 mkdir -p build/linux/release
 cd build/linux/release
-#cmake ../../../
-#make
+cmake ../../../
+make
 cd ../../../../
 
 #####
@@ -47,8 +47,8 @@ echo "Building tinyxmldll..."
 cd tinyxmldll
 mkdir -p build/linux/release
 cd build/linux/release
-#cmake ../../../
-#make
+cmake ../../../
+make
 cd ../../../../
 
 #####
@@ -57,8 +57,8 @@ echo "Building Board..."
 cd Board
 mkdir -p build/linux/release
 cd build/linux/release
-#cmake ../../../
-#make
+cmake ../../../
+make
 cd ../../../../
 
 #####
