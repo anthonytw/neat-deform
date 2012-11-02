@@ -77,6 +77,7 @@ class PopulationItem:
         buffer.close( )
         strio.seek( 0 )
         pil_image = Image.open( strio )
+        pil_image.load()
         image_chan_i = pil_image.split()
         image_chan = [
             image_chan_i[0].load(),
@@ -183,9 +184,9 @@ class PopulationModel(QAbstractListModel):
 
     def save_image(self, indices):
         image_path = os.getcwd() + "/savedimages/"
-        
+
         sys.stdout.write("Saving Images...")
-        
+
         if not os.path.exists(image_path):
             os.mkdir(image_path)
 
@@ -195,5 +196,5 @@ class PopulationModel(QAbstractListModel):
             image.convertToFormat( QImage.Format_RGB32 )
             image.save(fileloc, 'PNG')
             self.image_number += 1
-        
+
         sys.stdout.write("Images Saved\n")
