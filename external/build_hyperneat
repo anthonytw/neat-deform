@@ -1,6 +1,15 @@
 #!/bin/bash
 
-wx_build_dir=`wx-config --libs | cut -d" " -f1 | sed 's/-L//'`
+version=`cat /proc/version`
+if [[ "$version" == *"Red Hat"* ]]; then
+    wx_build_dir=`wx-config --cxxflags | cut -d" " -f1 | sed 's/-I//'`
+    wx_build_dir_debug=$wx_build_dir
+    wx_build_dir_release=$wx_build_dir
+else
+    wx_build_dir=`wx-config --libs | cut -d" " -f1 | sed 's/-L//'`
+    wx_build_dir_debug=$wx_build_dir/wx/include/gtk2-unicode-debug-2.8
+    wx_build_dir_release=$wx_build_dir/wx/include/gtk2-unicode-release-2.8
+fi
 echo "Using wxWidgets build directory: $wx_build_dir..."
 
 echo "Building HyperNEAT..."
@@ -20,8 +29,8 @@ cd build/linux/release
 #    -D TINYXMLDLL_INCLUDE=../../../../../tinyxmldll/include \
 #    -D TINYXMLDLL_LIB=../../../../../tinyxmldll/out \
 #    -D USE_GUI=YES \
-#    -D WXWIDGETS_BUILD_INCLUDE_DEBUG=$wx_build_dir/wx/include/gtk2-unicode-debug-2.8 \
-#    -D WXWIDGETS_BUILD_INCLUDE_RELEASE=$wx_build_dir/wx/include/gtk2-unicode-release-2.8 \
+#    -D WXWIDGETS_BUILD_INCLUDE_DEBUG=$wx_build_dir_debug \
+#    -D WXWIDGETS_BUILD_INCLUDE_RELEASE=$wx_build_dir_release \
 #    -D WXWIDGETS_DEBUG_LIB=/usr/lib \
 #    -D WXWIDGETS_INCLUDE=/usr/include/wx-2.8 \
 #    -D WXWIDGETS_RELEASE_LIB=/usr/lib \
