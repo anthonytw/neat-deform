@@ -24,7 +24,7 @@ class Window(QMainWindow):
         #see if there is an output directory
         if not os.path.exists(os.getcwd() + "/output"):
             os.mkdir(os.getcwd() + "/output")
-            
+
         # Load the image experiment.
         self.experiment = neat.setupExperiment(
             "%s/ImageExperiment.dat" % self.experiment_data_dir,
@@ -54,9 +54,9 @@ class Window(QMainWindow):
         lv.setEnabled( False )
         self.population_list = lv
 
-        #pop-up menu
-        lv.setContextMenuPolicy(Qt.CustomContextMenu)
-        lv.connect(lv, SIGNAL('customContextMenuRequested (const QPoint&)'),self.onContext)
+        # Context menu.
+        lv.setContextMenuPolicy( Qt.CustomContextMenu )
+        lv.connect( lv, SIGNAL('customContextMenuRequested (const QPoint&)'), self.handle_context_menu )
 
         # Create the population model.
         pm = PopulationModel( population_size )
@@ -90,7 +90,7 @@ class Window(QMainWindow):
         tw.setHorizontalHeaderLabels(QString("Parameter;Value").split(';'))
         tw.setColumnWidth( 0, 350 )
         tw.horizontalHeader().setStretchLastSection( True )
-        self.connect( tw, SIGNAL('itemChanged(QTableWidgetItem *)'), self.handle_parameter_change )
+        #self.connect( tw, SIGNAL('itemChanged(QTableWidgetItem *)'), self.handle_parameter_change )
         self.parameter_table = tw
 
         tw_layout = QVBoxLayout()
@@ -112,7 +112,7 @@ class Window(QMainWindow):
             index.setFlags( index.flags() ^ Qt.ItemIsEditable )
 
         # Initialize a horizontal layout for the evolve button.
-        btn_evolve = QPushButton( "Evolve" )
+        btn_evolve = QPushButton( "Shuffle" )
         self.connect( btn_evolve, SIGNAL('released()'), self.evolve_image )
         btn_evolve.setEnabled( False )
         self.btn_evolve = btn_evolve
@@ -129,6 +129,11 @@ class Window(QMainWindow):
         central_widget.setLayout( central_layout )
 
         self.setCentralWidget( central_widget )
+
+        # Create a menu
+        self.image_menu = QMenu("Menu", self)
+        self.image_menu_save_image = self.image_menu.addAction("Save Selected Images")
+        self.image_menu_save_network = self.image_menu.addAction("Save Selected Neural Network")
 
         ### Initialization
 
@@ -168,6 +173,10 @@ class Window(QMainWindow):
                 "Select Image", "",
                 "Image Files (*.png *.jpg *.bmp)" );
         if os.path.isfile(file_name):
+            # Disable evolve button.
+            self.btn_evolve.setEnabled( False )
+
+            # Load image.
             print "Loading image: %s..." % file_name
             self.population_list.setEnabled( True )
             self.original_image = QPixmap( file_name )
@@ -175,11 +184,16 @@ class Window(QMainWindow):
             self.population_model.set_original_image( scaled_image )
             self.original_image_label.setPixmap( scaled_image )
 
+            # Enable evolve button.
+            self.btn_evolve.setEnabled( True )
+
     # Handles listview changes. We only care if elements are selected.
     def handle_listview_change( self, selected, deselected ):
-        evolve_btn_enabled = self.population_list.selectionModel().hasSelection()
-        if self.btn_evolve.isEnabled() != evolve_btn_enabled:
-            self.btn_evolve.setEnabled( evolve_btn_enabled )
+        selection = self.population_list.selectionModel().hasSelection()
+        if selection:
+            self.btn_evolve.setText('Evolve')
+        else:
+            self.btn_evolve.setText('Shuffle')
 
     # Get next generation.
     def get_next_generation( self, initializing = False ):
@@ -205,10 +219,17 @@ class Window(QMainWindow):
 
     # Evolve the image with the selected individuals.
     def evolve_image( self ):
+        # Disable evolve button.
+        self.btn_evolve.setEnabled( False )
+
         # Add a reward to all selected elements.
         indices = self.population_list.selectionModel().selectedRows()
-        for index in indices:
-            self.population.getIndividual(index.row()).reward( 100 )
+        if len(indices) > 0:
+            for index in indices:
+                self.population.getIndividual(index.row()).reward( 100 )
+        else:
+            for index in xrange(self.population.getIndividualCount()):
+                self.population.getIndividual(index).reward( 1 )
 
         # Deselect elements.
         self.population_list.selectionModel().clearSelection()
@@ -219,16 +240,53 @@ class Window(QMainWindow):
         # Get next generation.
         self.get_next_generation()
 
+        # Reenable evolve button.
+        self.btn_evolve.setEnabled( True )
 
-    def onContext(self,point):
-       # Create a menu
-       menu = QMenu("Menu", self)
-       save_image = menu.addAction("Save Selected Images")
-       save_network = menu.addAction("Save Selected Neural Network")
-       # Show the context menu.
-       action = menu.exec_(self.population_list.mapToGlobal(point))
-       if action == save_image:
-           self.population_model.save_image(self.population_list.selectionModel().selectedRows())
-       elif action ==  save_network:
-           self.experiment.saveBest()
+    def handle_context_menu( self, point ):
+        # Show the context menu if items are selected.
+        indices = self.population_list.selectionModel().selectedRows()
+        if len(indices) > 0:
+            action = self.image_menu.exec_( self.population_list.mapToGlobal(point) )
 
+            # Save the selected images.
+            if action == self.image_menu_save_image:
+                file_name = QFileDialog.getSaveFileName(
+                    self,
+                    "Save Image(s) as...", "",
+                    "PNG Image (*.png)" );
+                if file_name:
+                    if file_name.length() - file_name.lastIndexOf('.png', -1, Qt.CaseInsensitive) == 4:
+                        file_name.chop( 4 )
+                    print "Save image(s) to: %s" % file_name
+                    for index in indices:
+                        index_file_name = "%s_%d.png" % (file_name, index.row())
+                        print " - Saving image: %s..." % (index_file_name),
+                        sys.stdout.flush()
+                        distorted_image_map = self.population_model.distort(
+                            index.row(), self.original_image )
+                        distorted_image = QImage( distorted_image_map )
+                        distorted_image.save( index_file_name )
+                        print "Done."
+                else:
+                    print "Save image(s): Canceled"
+
+            # Save the selected networks.
+            elif action ==  self.image_menu_save_network:
+                file_name = QFileDialog.getSaveFileName(
+                    self,
+                    "Save Network(s) as...", "",
+                    "XML File (*.xml)" );
+                if file_name:
+                    if file_name.length() - file_name.lastIndexOf('.xml', -1, Qt.CaseInsensitive) == 4:
+                        file_name.chop( 4 )
+                    print "Save network(s) to: %s" % file_name
+                    for index in indices:
+                        index_file_name = "%s_%d.xml" % (file_name, index.row())
+                        print " - Saving network: %s..." % (index_file_name),
+                        sys.stdout.flush()
+                        self.population.getIndividual(index.row()).saveToFile(
+                            str(index_file_name), False )
+                        print "Done."
+                else:
+                    print "Save network(s): Canceled"
