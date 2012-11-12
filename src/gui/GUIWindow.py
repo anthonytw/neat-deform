@@ -90,7 +90,7 @@ class Window(QMainWindow):
         tw.setHorizontalHeaderLabels(QString("Parameter;Value").split(';'))
         tw.setColumnWidth( 0, 350 )
         tw.horizontalHeader().setStretchLastSection( True )
-        #self.connect( tw, SIGNAL('itemChanged(QTableWidgetItem *)'), self.handle_parameter_change )
+        self.connect( tw, SIGNAL('itemChanged(QTableWidgetItem *)'), self.handle_parameter_change )
         self.parameter_table = tw
 
         tw_layout = QVBoxLayout()
