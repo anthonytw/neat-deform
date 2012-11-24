@@ -1,0 +1,106 @@
+\documentclass[conference]{IEEEtran}
+
+% *** CITATION PACKAGES ***
+%
+\usepackage{cite}
+% cite.sty was written by Donald Arseneau
+% V1.6 and later of IEEEtran pre-defines the format of the cite.sty package
+% \cite{} output to follow that of IEEE. Loading the cite package will
+% result in citation numbers being automatically sorted and properly
+% "compressed/ranged". e.g., [1], [9], [2], [7], [5], [6] without using
+% cite.sty will become [1], [2], [5]--[7], [9] using cite.sty. cite.sty's
+% \cite will automatically add leading space, if needed. Use cite.sty's
+% noadjust option (cite.sty V3.8 and later) if you want to turn this off.
+% cite.sty is already installed on most LaTeX systems. Be sure and use
+% version 4.0 (2003-05-27) and later if using hyperref.sty. cite.sty does
+% not currently provide for hyperlinked citations.
+% The latest version can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/cite/
+% The documentation is contained in the cite.sty file itself.
+
+\usepackage[pdftex]{graphicx}
+\graphicspath{{rec/}}
+\DeclareGraphicsExtensions{.pdf,.jpeg,.png}
+
+\usepackage[cmex10]{amsmath}
+\interdisplaylinepenalty=2500
+
+\usepackage{algorithmic}
+\usepackage{array}
+\usepackage{mdwmath}
+\usepackage{mdwtab}
+\usepackage{eqparbox}
+
+\usepackage[tight,footnotesize]{subfigure}
+
+\usepackage{fixltx2e}
+\usepackage{stfloats}
+
+\usepackage{url}
+
+% correct bad hyphenation here
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+\begin{document}
+%
+% paper title
+% can use linebreaks \\ within to get better formatting as desired
+\title{CPPN Based Evolution of Bitmap Facial Distortion}
+
+
+% author names and affiliations
+% use a multiple column layout for up to three different
+% affiliations
+\author{\IEEEauthorblockN{James Schneider}
+\IEEEauthorblockA{School of Electrical Engineering and \\Computer Science\\
+University of Central Florida\\
+Orlando, FL 32816\\
+Email: jschneider@knights.ucf.edu}
+\and
+\IEEEauthorblockN{Anthony Wertz}
+\IEEEauthorblockA{School of Electrical Engineering and \\Computer Science\\
+University of Central Florida\\
+Orlando, FL 32816\\
+Email: awertz@knights.ucf.edu}}
+
+% make the title area
+\maketitle
+
+\begin{abstract}
+\input{sections/abstract}
+\end{abstract}
+
+% For peerreview papers, this IEEEtran command inserts a page break and
+% creates the second title. It will be ignored for other modes.
+\IEEEpeerreviewmaketitle
+
+\section{Introduction}
+\input{sections/introduction}
+
+Remove \cite{*} % Remove when we cite something.
+
+\section{Background}
+\input{sections/background}
+
+\section{Approach}
+\input{sections/approach}
+
+\section{Experiments}
+\input{sections/experiments}
+
+\section{Results}
+\input{sections/results}
+
+\section{Discussion}
+\input{sections/discussion}
+
+\section{Future Work}
+\input{sections/future_work}
+
+\section{Conclusion}
+\input{sections/conclusion}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references.bib}
+
+\end{document}
