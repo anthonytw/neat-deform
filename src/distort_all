@@ -1,0 +1,5 @@
+#!/bin/bash
+
+fullname=`basename $1`
+filename="${fullname%.*}"
+ls ../rec/faces/ | xargs -I {} ./distort $1 ../rec/faces/{} ../rec/faces_distorted/${filename}_{}

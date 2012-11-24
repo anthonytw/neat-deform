@@ -42,6 +42,11 @@ pip-log.txt
 *.aux
 *.backup
 *.log
+*.bbl
+*.blg
 
 # Apple junk.
 .DS_Store
+
+# Temporary files.
+*~

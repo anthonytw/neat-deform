@@ -1,0 +1,25 @@
+<Genetics ActualRandomSeed="83006883" NodeCounter="13" LinkCounter="26" SpeciesCounter="274" AddBiasToHiddenNodes="0.00000000000000000000" AdultLinkAge="18.00000000000000000000" AgeSignificance="1.00000000000000000000" AllowAddNodeToRecurrentConnection="0.00000000000000000000" AllowRecurrentConnections="1.00000000000000000000" AllowSelfRecurrentConnections="1.00000000000000000000" CompatibilityModifier="0.30000001192092895508" CompatibilityThreshold="11.10000020265579223633" DisjointCoefficient="2.00000000000000000000" DropoffAge="15.00000000000000000000" ExcessCoefficient="2.00000000000000000000" ExperimentType="31.00000000000000000000" ExtraActivationFunctions="1.00000000000000000000" ExtraActivationUpdates="1.00000000000000000000" FitnessCoefficient="0.00000000000000000000" ForceCopyGenerationChampion="1.00000000000000000000" GenerationDumpModulo="10.00000000000000000000" LinkGeneMinimumWeightForPhentoype="0.00000000000000000000" MaxGenerations="600000.00000000000000000000" MutateAddLinkProbability="0.02999999932944774628" MutateAddNodeProbability="0.01999999955296516418" MutateDemolishLinkProbability="0.00000000000000000000" MutateLinkProbability="0.10000000149011611938" MutateLinkWeightsProbability="0.89999997615814208984" MutateOnlyProbability="0.25000000000000000000" MutateSpeciesChampionProbability="0.00000000000000000000" MutationPower="1.50000000000000000000" OnlyGaussianHiddenNodes="0.00000000000000000000" PopulationSize="1.00000000000000000000" RandomSeed="-1.00000000000000000000" SignedActivation="1.00000000000000000000" SmallestSpeciesSizeWithElitism="5.00000000000000000000" SpeciesSizeTarget="8.00000000000000000000" SurvivalThreshold="0.20000000298023223877" WeightDifferenceCoefficient="1.00000000000000000000">
+    <GeneticGeneration GenNumber="1" UserData="" AverageFitness="0" SpeciesCount="1">
+        <Individual Fitness="0.00000000000000000000" SpeciesID="34226832" UserData="">
+            <Nodes>
+                <Node ID="0" Enabled="1" Name="Bias" Type="NetworkSensor" DrawingPosition="0.00000000000000000000" TopologyFrozen="0" ActivationFunction="0" />
+                <Node ID="1" Enabled="1" Name="X" Type="NetworkSensor" DrawingPosition="0.00000000000000000000" TopologyFrozen="0" ActivationFunction="0" />
+                <Node ID="2" Enabled="1" Name="Y" Type="NetworkSensor" DrawingPosition="0.00000000000000000000" TopologyFrozen="0" ActivationFunction="0" />
+                <Node ID="3" Enabled="1" Name="XOUT" Type="NetworkOutputNode" DrawingPosition="1.00000000000000000000" TopologyFrozen="0" ActivationFunction="0" />
+                <Node ID="4" Enabled="1" Name="YOUT" Type="NetworkOutputNode" DrawingPosition="1.00000000000000000000" TopologyFrozen="0" ActivationFunction="0" />
+            </Nodes>
+            <Links>
+                <Link ID="0" Enabled="1" fromNode="0" toNode="3" weight="2.86695152274767517397" fixed="0" />
+                <Link ID="1" Enabled="1" fromNode="0" toNode="4" weight="-0.99516929869382642071" fixed="0" />
+                <Link ID="2" Enabled="1" fromNode="1" toNode="3" weight="0.91210814090354375150" fixed="0" />
+                <Link ID="3" Enabled="1" fromNode="1" toNode="4" weight="5.00000000000000000000" fixed="0" />
+                <Link ID="4" Enabled="1" fromNode="2" toNode="3" weight="1.91218091834155012876" fixed="0" />
+                <Link ID="5" Enabled="1" fromNode="2" toNode="4" weight="-2.41244358764717636845" fixed="0" />
+                <Link ID="6" Enabled="1" fromNode="3" toNode="3" weight="-0.48941119529001697597" fixed="0" />
+                <Link ID="7" Enabled="1" fromNode="3" toNode="4" weight="4.07282273811338590974" fixed="0" />
+                <Link ID="8" Enabled="1" fromNode="4" toNode="3" weight="-0.56841893145976229995" fixed="0" />
+                <Link ID="9" Enabled="1" fromNode="4" toNode="4" weight="-0.82397405498766984611" fixed="0" />
+            </Links>
+        </Individual>
+    </GeneticGeneration>
+</Genetics>
