@@ -1,7 +1,8 @@
 #!/bin/bash
 
 version=`cat /proc/version`
-if [[ "$version" == *"Red Hat"* ]]; then
+python_version=`python --version &> /dev/stdout | sed 's/Python \([0-9].[0-9]\).[0-9]/\1/'`
+if [[ "$version" == *"Red Hat"* || "$version" == *"Debian"* ]]; then
     wx_build_dir=`wx-config --cxxflags | cut -d" " -f1 | sed 's/-I//'`
     wx_build_dir_debug=$wx_build_dir
     wx_build_dir_release=$wx_build_dir
@@ -10,6 +11,7 @@ else
     wx_build_dir_debug=$wx_build_dir/wx/include/gtk2-unicode-debug-2.8
     wx_build_dir_release=$wx_build_dir/wx/include/gtk2-unicode-release-2.8
 fi
+echo "Using python version: $python_version"
 echo "Using wxWidgets build directory: $wx_build_dir..."
 
 echo "Building HyperNEAT..."
@@ -24,8 +26,8 @@ cmake \
     -D BUILD_MPI=OFF \
     -D BUILD_PYTHON=ON \
     -D JGTL_INCLUDE=../../../../../JGTL/include \
-    -D PYTHON_INCLUDE=/usr/include/python2.7 \
-    -D PYTHON_LIB=/usr/lib/python2.7 \
+    -D PYTHON_INCLUDE=/usr/include/python$python_version \
+    -D PYTHON_LIB=/usr/lib/python$python_version \
     -D TINYXMLDLL_INCLUDE=../../../../../tinyxmldll/include \
     -D TINYXMLDLL_LIB=../../../../../tinyxmldll/out \
     -D USE_GUI=YES \
