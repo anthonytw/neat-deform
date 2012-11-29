@@ -153,11 +153,11 @@ class PopulationItem:
 
     def get_icon( self ):
         return QVariant() if self.icon == None else self.icon
-    
+
     def calculate_entropy(self, image):
         image = inner(image, [299, 587, 114]) / 1000
         return (image - image.mean()) / image.std()
-    
+
 # A simple class for handling a population model.
 class PopulationModel(QAbstractListModel):
     def __init__( self, population_size, parent = None ):
@@ -174,7 +174,7 @@ class PopulationModel(QAbstractListModel):
 
     def update_item( self, index, network = None ):
         self.population[index].update_distortion( self.original_image, network )
-        
+
     def image_entropy(self,index):
         return self.population[index].entropy
 
@@ -184,7 +184,7 @@ class PopulationModel(QAbstractListModel):
 
     def rowCount( self, parent = QModelIndex() ):
         return len(self.population)
-    
+
     def correlate_image(self, image_entropy1, image_entropy2):
         return correlate2d(image_entropy1, image_entropy2, mode='same').max()
 

@@ -18,7 +18,7 @@ class Window(QMainWindow):
 
         self.experiment_data_dir  = "../external/HyperNEAT/NE/HyperNEAT/out/data"
         self.date_specifier = datetime.now().strftime("%y%m%d_%H%M%S")
-	self.image_storage = []
+        self.image_storage = []
 
         # Initialize HyperNEAT.
         neat.initialize()
@@ -174,6 +174,7 @@ class Window(QMainWindow):
                 self,
                 "Select Image", "",
                 "Image Files (*.png *.jpg *.bmp)" );
+
         if os.path.isfile(file_name):
             # Disable evolve button.
             self.btn_evolve.setEnabled( False )
@@ -206,7 +207,7 @@ class Window(QMainWindow):
         self.experiment.preprocessPopulation()
         self.population = self.experiment.pythonEvaluationSet()
 
-	indices = self.population_list.selectionModel().selectedRows()
+        indices = self.population_list.selectionModel().selectedRows()
 
         # Update population model.
         if self.population.getIndividualCount() != self.population_model.rowCount():
@@ -219,30 +220,30 @@ class Window(QMainWindow):
             individual = self.population.getIndividual(i)
             network = individual.spawnFastPhenotypeStack()
             while True:
-		self.population_model.update_item(i, network)
-		entropy = self.population_model.image_entropy(i)
-		if i in indices:
-		    # Check if image is already in storage
-		    if entropy not in self.image_storage:
-		        self.image_storage.append(entropy)
-		    break
-		else:
-		    similar_found = False
- 		    # Is within 5% of anything else in the list
-		    for value in self.image_storage:
-			similarity_value_outside = self.population_model.correlate_image(value,entropy)
-			similarity_value_self = self.population_model.correlate_image(value,value)
-		        if similarity_value_self*.9 <= similarity_value_outside:
-			    if similarity_value_self*1.1 >= similarity_value_outside:
-			        similar_found = True
-			        break
-                    if not similar_found:
-		        break
+                self.population_model.update_item(i, network)
+                entropy = self.population_model.image_entropy(i)
+                if i in indices:
+                    # Check if image is already in storage
+                    if entropy not in self.image_storage:
+                        self.image_storage.append(entropy)
+                        break
+                    else:
+                        similar_found = False
+                        # Is within 5% of anything else in the list
+                        for value in self.image_storage:
+                            similarity_value_outside = self.population_model.correlate_image(value,entropy)
+                            similarity_value_self = self.population_model.correlate_image(value,value)
+                            if similarity_value_self*.9 <= similarity_value_outside:
+                                if similarity_value_self*1.1 >= similarity_value_outside:
+                                    similar_found = True
+                                    break
+                        if not similar_found:
+                            break
 
             self.population_list.selectionModel().select(index, QItemSelectionModel.Deselect)
             if repaint:
-	        self.population_list.repaint()
-	    print "Done"
+                self.population_list.repaint()
+                print "Done"
 
     # Evolve the image with the selected individuals.
     def evolve_image( self , repaint = True ):
@@ -251,7 +252,7 @@ class Window(QMainWindow):
 
         # Add a reward to all selected elements.
         indices = self.population_list.selectionModel().selectedRows()
-        
+
         if len(indices) > 0:
             for index in indices:
                 self.population.getIndividual(index.row()).reward( 100 )
@@ -266,26 +267,26 @@ class Window(QMainWindow):
         self.experiment.finishEvaluations()
 
         # Get next generation.
-	if not repaint:
+        if not repaint:
             self.get_next_generation( repaint=False )
-	else:
+        else:
             self.get_next_generation()
 
         # Reenable evolve button.
         self.btn_evolve.setEnabled( True )
-        
+
     def evolve_or_search(self):
         #get the selected rows,yeah I know twice
         indices = self.population_list.selectionModel().selectedRows()
-        
+
         if(len(indices) > 0):
             self.evolve_image()
         else:
             numGens = QInputDialog.getInt(self,'Number of Generations','numGens')
             for i in xrange(numGens[0] - 1):
                 self.evolve_image( repaint=False )
-	    self.evolve_image()
-        
+                self.evolve_image()
+
 
     def handle_context_menu( self, point ):
         # Show the context menu if items are selected.
@@ -312,25 +313,25 @@ class Window(QMainWindow):
                         distorted_image = QImage( distorted_image_map )
                         distorted_image.save( index_file_name )
                         print "Done."
-                else:
-                    print "Save image(s): Canceled"
+                    else:
+                        print "Save image(s): Canceled"
 
             # Save the selected networks.
-            elif action ==  self.image_menu_save_network:
-                file_name = QFileDialog.getSaveFileName(
-                    self,
-                    "Save Network(s) as...", "",
-                    "XML File (*.xml)" );
-                if file_name:
-                    if file_name.length() - file_name.lastIndexOf('.xml', -1, Qt.CaseInsensitive) == 4:
-                        file_name.chop( 4 )
-                    print "Save network(s) to: %s" % file_name
-                    for index in indices:
-                        index_file_name = "%s_%d.xml" % (file_name, index.row())
-                        print " - Saving network: %s..." % (index_file_name),
-                        sys.stdout.flush()
-                        self.population.getIndividual(index.row()).saveToFile(
-                            str(index_file_name), False )
-                        print "Done."
+        elif action ==  self.image_menu_save_network:
+            file_name = QFileDialog.getSaveFileName(
+                self,
+                "Save Network(s) as...", "",
+                "XML File (*.xml)" );
+            if file_name:
+                if file_name.length() - file_name.lastIndexOf('.xml', -1, Qt.CaseInsensitive) == 4:
+                    file_name.chop( 4 )
+                print "Save network(s) to: %s" % file_name
+                for index in indices:
+                    index_file_name = "%s_%d.xml" % (file_name, index.row())
+                    print " - Saving network: %s..." % (index_file_name),
+                    sys.stdout.flush()
+                    self.population.getIndividual(index.row()).saveToFile(
+                        str(index_file_name), False )
+                    print "Done."
                 else:
                     print "Save network(s): Canceled"
