@@ -227,18 +227,17 @@ class Window(QMainWindow):
                     if entropy not in self.image_storage:
                         self.image_storage.append(entropy)
                         break
-                    else:
-                        similar_found = False
-                        # Is within 5% of anything else in the list
-                        for value in self.image_storage:
-                            similarity_value_outside = self.population_model.correlate_image(value,entropy)
-                            similarity_value_self = self.population_model.correlate_image(value,value)
-                            if similarity_value_self*.9 <= similarity_value_outside:
-                                if similarity_value_self*1.1 >= similarity_value_outside:
-                                    similar_found = True
-                                    break
-                        if not similar_found:
+                else:
+                    similar_found = False
+                    # Is within 5% of anything else in the list
+                    for value in self.image_storage:
+                        similarity_value_outside = self.population_model.correlate_image(value,entropy)
+                        similarity_value_self = self.population_model.correlate_image(value,value)
+                        if (similarity_value_self*.9 <= similarity_value_outside) and (similarity_value_self*1.1 >= similarity_value_outside):
+                            similar_found = True
                             break
+                    if not similar_found:
+                        break
 
             self.population_list.selectionModel().select(index, QItemSelectionModel.Deselect)
             if repaint:
