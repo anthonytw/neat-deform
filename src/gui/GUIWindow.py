@@ -4,6 +4,7 @@ from PopulationModel import *
 import os.path
 import sys
 import PyHyperNEAT as neat
+from random import randint
 from datetime import datetime
 
 class Window(QMainWindow):
@@ -113,7 +114,7 @@ class Window(QMainWindow):
 
         # Initialize a horizontal layout for the evolve button.
         btn_evolve = QPushButton( "Shuffle" )
-        self.connect( btn_evolve, SIGNAL('released()'), self.evolve_image )
+        self.connect( btn_evolve, SIGNAL('released()'), self.evolve_or_search )
         btn_evolve.setEnabled( False )
         self.btn_evolve = btn_evolve
 
@@ -196,7 +197,7 @@ class Window(QMainWindow):
             self.btn_evolve.setText('Shuffle')
 
     # Get next generation.
-    def get_next_generation( self, initializing = False ):
+    def get_next_generation( self, initializing = False , repaint = True ):
         if not initializing:
             self.experiment.produceNextGeneration()
         self.experiment.preprocessPopulation()
@@ -212,24 +213,28 @@ class Window(QMainWindow):
             self.population_list.selectionModel().select(index, QItemSelectionModel.Select)
             individual = self.population.getIndividual(i)
             network = individual.spawnFastPhenotypeStack()
+            #while True:
             self.population_model.update_item(i, network)
+            #self.population_model.image_entropy(i)
             self.population_list.selectionModel().select(index, QItemSelectionModel.Deselect)
-            self.population_list.repaint()
-            print "Done"
+            if repaint:
+	        self.population_list.repaint()
+	    print "Done"
 
     # Evolve the image with the selected individuals.
-    def evolve_image( self ):
+    def evolve_image( self , repaint = True ):
         # Disable evolve button.
         self.btn_evolve.setEnabled( False )
 
         # Add a reward to all selected elements.
         indices = self.population_list.selectionModel().selectedRows()
+        
         if len(indices) > 0:
             for index in indices:
                 self.population.getIndividual(index.row()).reward( 100 )
         else:
             for index in xrange(self.population.getIndividualCount()):
-                self.population.getIndividual(index).reward( 1 )
+                self.population.getIndividual(index).reward( randint(1,10) )
 
         # Deselect elements.
         self.population_list.selectionModel().clearSelection()
@@ -238,10 +243,26 @@ class Window(QMainWindow):
         self.experiment.finishEvaluations()
 
         # Get next generation.
-        self.get_next_generation()
+	if not self.repaint:
+            self.get_next_generation( repaint=False )
+	else:
+            self.get_next_generation()
 
         # Reenable evolve button.
         self.btn_evolve.setEnabled( True )
+        
+    def evolve_or_search(self):
+        #get the selected rows,yeah I know twice
+        indices = self.population_list.selectionModel().selectedRows()
+        
+        if(len(indices) > 0):
+            self.evolve_image()
+        else:
+            numGens = QInputDialog.getInt(self,'Number of Generations','numGens')
+            for i in xrange(numGens[0] - 1):
+                self.evolve_image( repaint=False )
+	    self.evolve_image()
+        
 
     def handle_context_menu( self, point ):
         # Show the context menu if items are selected.

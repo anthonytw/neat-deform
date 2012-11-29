@@ -1,6 +1,7 @@
 #import PyHyperNEAT as neat
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from scipy import *
 import cStringIO
 import Image
 import os
@@ -52,6 +53,7 @@ class PopulationItem:
         self.network = None
         self.distorted_image = None
         self.icon = None
+        self.entropy = None
 
     def update_distortion( self, image, network = None ):
         if network != None:
@@ -78,6 +80,7 @@ class PopulationItem:
         strio.seek( 0 )
         pil_image = Image.open( strio )
         pil_image.load()
+        self.entropy = self.calculate_entropy(pil_image)
         image_chan_i = pil_image.split()
         image_chan = [
             image_chan_i[0].load(),
@@ -150,7 +153,11 @@ class PopulationItem:
 
     def get_icon( self ):
         return QVariant() if self.icon == None else self.icon
-
+    
+    def calculate_entropy(self, image):
+        image = inner(image, [299, 587, 114]) / 1000
+        return (image - image.mean()) / image.std()
+    
 # A simple class for handling a population model.
 class PopulationModel(QAbstractListModel):
     def __init__( self, population_size, parent = None ):
@@ -167,6 +174,9 @@ class PopulationModel(QAbstractListModel):
 
     def update_item( self, index, network = None ):
         self.population[index].update_distortion( self.original_image, network )
+        
+    def image_entropy(self,index):
+        return self.population[index].entropy
 
     def distort( self, index, image_map ):
         return self.population[index].distort(
@@ -174,6 +184,9 @@ class PopulationModel(QAbstractListModel):
 
     def rowCount( self, parent = QModelIndex() ):
         return len(self.population)
+    
+    def correlate_image(self, image_entropy1, image_entropy2):
+        return correlate2d(image_entropy1, image_entropy2, mode='same').max()
 
     def data( self, index, role ):
         if (not index.isValid()) or (index.row() >= self.population_size):
