@@ -18,6 +18,7 @@ class Window(QMainWindow):
 
         self.experiment_data_dir  = "../external/HyperNEAT/NE/HyperNEAT/out/data"
         self.date_specifier = datetime.now().strftime("%y%m%d_%H%M%S")
+	self.image_storage = []
 
         # Initialize HyperNEAT.
         neat.initialize()
@@ -198,10 +199,14 @@ class Window(QMainWindow):
 
     # Get next generation.
     def get_next_generation( self, initializing = False , repaint = True ):
+
         if not initializing:
             self.experiment.produceNextGeneration()
+
         self.experiment.preprocessPopulation()
         self.population = self.experiment.pythonEvaluationSet()
+
+	indices = self.population_list.selectionModel().selectedRows()
 
         # Update population model.
         if self.population.getIndividualCount() != self.population_model.rowCount():
@@ -213,9 +218,27 @@ class Window(QMainWindow):
             self.population_list.selectionModel().select(index, QItemSelectionModel.Select)
             individual = self.population.getIndividual(i)
             network = individual.spawnFastPhenotypeStack()
-            #while True:
-            self.population_model.update_item(i, network)
-            #self.population_model.image_entropy(i)
+            while True:
+		self.population_model.update_item(i, network)
+		entropy = self.population_model.image_entropy(i)
+		if i in indices:
+		    # Check if image is already in storage
+		    if entropy not in self.image_storage:
+		        self.image_storage.append(entropy)
+		    break
+		else:
+		    similar_found = False
+ 		    # Is within 5% of anything else in the list
+		    for value in self.image_storage:
+			similarity_value_outside = self.population_model.correlate_image(value,entropy)
+			similarity_value_self = self.population_model.correlate_image(value,value)
+		        if similarity_value_self*.9 <= similarity_value_outside:
+			    if similarity_value_self*1.1 >= similarity_value_outside:
+			        similar_found = True
+			        break
+                    if not similar_found:
+		        break
+
             self.population_list.selectionModel().select(index, QItemSelectionModel.Deselect)
             if repaint:
 	        self.population_list.repaint()
