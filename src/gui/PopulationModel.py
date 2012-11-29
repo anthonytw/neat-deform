@@ -1,4 +1,3 @@
-#import PyHyperNEAT as neat
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from scipy import *
@@ -61,11 +60,13 @@ class PopulationItem:
 
         if (image != None) and (self.network != None):
             self.distorted_image = self.distort( image, self.network )
-            self.icon = QIcon(self.distorted_image)
+
+    def update_icon( self ):
+        if (self.distorted_image != None):
+            self.icon = QIcon(QPixmap(self.distorted_image))
 
     #@profile
     def distort( self, image_map, network ):
-        #return QPixmap( QImage(image_map) )
         # Convert whatever's sent in to the appropriate image format.
         image = QImage( image_map )
         image.convertToFormat( QImage.Format_RGB32 )
@@ -146,7 +147,7 @@ class PopulationItem:
                 distorted_image.setPixel(
                     x, y, qRgb(p[0], p[1], p[2]) )
 
-        return QPixmap(distorted_image)
+        return distorted_image
 
     def get_distorted_image( self ):
         return QVariant() if self.distorted_image == None else self.distorted_image
@@ -171,9 +172,13 @@ class PopulationModel(QAbstractListModel):
         self.original_image = image
         for i in xrange(self.population_size):
             self.update_item( i )
+            self.update_icon( i )
 
     def update_item( self, index, network = None ):
         self.population[index].update_distortion( self.original_image, network )
+
+    def update_icon( self, index ):
+        self.population[index].update_icon()
 
     def image_entropy(self,index):
         return self.population[index].entropy

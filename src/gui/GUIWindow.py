@@ -1,15 +1,18 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-from PopulationModel import *
 import os.path
 import sys
 import PyHyperNEAT as neat
 from random import randint
 from datetime import datetime
 
+from PopulationModel import *
+from EvolveThread import *
+
 class Window(QMainWindow):
     def __init__( self, parent = None ):
         super(Window, self).__init__( parent )
+        self.setWindowTitle( 'Interactive Distortion Evolver' )
 
         ### Experiment Configuration
         # ATW: TODO: When we start getting reasonable distortions, there
@@ -23,7 +26,7 @@ class Window(QMainWindow):
         # Initialize HyperNEAT.
         neat.initialize()
 
-        #see if there is an output directory
+        # See if there is an output directory.
         if not os.path.exists(os.getcwd() + "/output"):
             os.mkdir(os.getcwd() + "/output")
 
@@ -115,12 +118,18 @@ class Window(QMainWindow):
 
         # Initialize a horizontal layout for the evolve button.
         btn_evolve = QPushButton( "Shuffle" )
-        self.connect( btn_evolve, SIGNAL('released()'), self.evolve_or_search )
+        self.connect( btn_evolve, SIGNAL('released()'), self.evolve_image )
         btn_evolve.setEnabled( False )
         self.btn_evolve = btn_evolve
+        self.btn_evolve.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Preferred )
+
+        self.spin_evolve_iterations = QSpinBox()
+        self.spin_evolve_iterations.setRange( 1, 100 )
+        self.spin_evolve_iterations.setValue( 1 )
 
         control_layout = QHBoxLayout()
         control_layout.addWidget( btn_evolve )
+        control_layout.addWidget( self.spin_evolve_iterations )
 
         # Initialize vertical central layout.
         central_layout = QVBoxLayout()
@@ -143,8 +152,22 @@ class Window(QMainWindow):
         if len(sys.argv) >= 2:
             self.select_image(sys.argv[1])
 
+        # Create progress dialog.
+        self.progress_dialog = QProgressDialog( self );
+        self.progress_dialog.setLabelText( "Evolving population..." )
+        self.progress_dialog.setWindowModality( Qt.WindowModal );
+        self.progress_dialog.setVisible( False )
+        self.progress_dialog.setCancelButton( None )
+
+        # Start evolver thread.
+        self.evolve_thread = EvolveThread( self )
+        self.evolve_thread.finished_job.connect( self.finish_evolution )
+        self.evolve_thread.update_progress.connect( self.update_evolution_progress )
+        self.evolve_thread.start()
+
         # Generate first population.
-        self.get_next_generation( initializing=True )
+        self.population = self.experiment.pythonEvaluationSet()
+        self.evolve_image()
 
     # Destructor.
     def __del__( self ):
@@ -153,6 +176,13 @@ class Window(QMainWindow):
 
         # Cleanup HyperNEAT.
         neat.cleanup()
+
+        # Exit evolve thread.
+        try:
+            self.evolve_thread.terminate()
+            self.evolve_thread.wait( 5000 )
+        except NameError:
+            print "Evolve thread not created yet, thus not destroyed."
 
     # Update a parameter value.
     def handle_parameter_change( self, parameter ):
@@ -182,10 +212,10 @@ class Window(QMainWindow):
             # Load image.
             print "Loading image: %s..." % file_name
             self.population_list.setEnabled( True )
-            self.original_image = QPixmap( file_name )
+            self.original_image = QImage( file_name )
             scaled_image = self.original_image.scaled(120, 120, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             self.population_model.set_original_image( scaled_image )
-            self.original_image_label.setPixmap( scaled_image )
+            self.original_image_label.setPixmap( QPixmap(scaled_image) )
 
             # Enable evolve button.
             self.btn_evolve.setEnabled( True )
@@ -194,98 +224,98 @@ class Window(QMainWindow):
     def handle_listview_change( self, selected, deselected ):
         selection = self.population_list.selectionModel().hasSelection()
         if selection:
+            self.spin_evolve_iterations.setEnabled( False )
             self.btn_evolve.setText('Evolve')
         else:
+            self.spin_evolve_iterations.setEnabled( True )
             self.btn_evolve.setText('Shuffle')
 
-    # Get next generation.
-    def get_next_generation( self, initializing = False , repaint = True ):
-
-        if not initializing:
-            self.experiment.produceNextGeneration()
-
-        self.experiment.preprocessPopulation()
-        self.population = self.experiment.pythonEvaluationSet()
-
-        indices = self.population_list.selectionModel().selectedRows()
-
-        # Update population model.
-        if self.population.getIndividualCount() != self.population_model.rowCount():
-            print "WARNING! Discrepency between population size and model size! Things might blow up. Wear a hardhat."
-
-        for i in xrange(self.population_model.rowCount()):
-            print "Updating network %2d with new network..." % i,
-            index = self.population_list.model().index(i, 0)
-            self.population_list.selectionModel().select(index, QItemSelectionModel.Select)
-            individual = self.population.getIndividual(i)
-            network = individual.spawnFastPhenotypeStack()
-            while True:
-                self.population_model.update_item(i, network)
-                entropy = self.population_model.image_entropy(i)
-                if i in indices:
-                    # Check if image is already in storage
-                    if entropy not in self.image_storage:
-                        self.image_storage.append(entropy)
-                        break
-                else:
-                    similar_found = False
-                    # Is within 5% of anything else in the list
-                    for value in self.image_storage:
-                        similarity_value_outside = self.population_model.correlate_image(value,entropy)
-                        similarity_value_self = self.population_model.correlate_image(value,value)
-                        if (similarity_value_self*.9 <= similarity_value_outside) and (similarity_value_self*1.1 >= similarity_value_outside):
-                            similar_found = True
-                            break
-                    if not similar_found:
-                        break
-
-            self.population_list.selectionModel().select(index, QItemSelectionModel.Deselect)
-            if repaint:
-                self.population_list.repaint()
-                print "Done"
+#    # Get next generation.
+#    def get_next_generation( self, initializing = False, repaint = True ):
+#
+#        if not initializing:
+#            print "WARNING! get_next_generation used while not initializing! OMFG"
+#            return
+#            self.experiment.produceNextGeneration()
+#
+#        self.experiment.preprocessPopulation()
+#        self.population = self.experiment.pythonEvaluationSet()
+#
+#        indices = self.population_list.selectionModel().selectedRows()
+#
+#        # Update population model.
+#        if self.population.getIndividualCount() != self.population_model.rowCount():
+#            print "WARNING! Discrepency between population size and model size! Things might blow up. Wear a hardhat."
+#
+#        for i in xrange(self.population_model.rowCount()):
+#            print "Updating network %2d with new network..." % i,
+#            index = self.population_list.model().index(i, 0)
+#
+#            if repaint:
+#                self.population_list.selectionModel().select(index, QItemSelectionModel.Select)
+#
+#            individual = self.population.getIndividual(i)
+#            network = individual.spawnFastPhenotypeStack()
+#            while True:
+#                self.population_model.update_item(i, network)
+#                self.population_model.update_icon(i)
+#                entropy = self.population_model.image_entropy(i)
+#                if i in indices:
+#                    # Check if image is already in storage
+#                    if entropy not in self.image_storage:
+#                        self.image_storage.append(entropy)
+#                        break
+#                else:
+#                    similar_found = False
+#                    # Is within 5% of anything else in the list
+#                    for value in self.image_storage:
+#                        similarity_value_outside = self.population_model.correlate_image(value,entropy)
+#                        similarity_value_self = self.population_model.correlate_image(value,value)
+#                        if (similarity_value_self*.9 <= similarity_value_outside) and (similarity_value_self*1.1 >= similarity_value_outside):
+#                            similar_found = True
+#                            break
+#                    if not similar_found:
+#                        break
+#
+#            if repaint:
+#                self.population_list.selectionModel().select(index, QItemSelectionModel.Deselect)
+#            print "Done"
 
     # Evolve the image with the selected individuals.
-    def evolve_image( self , repaint = True ):
+    def evolve_image( self ):
         # Disable evolve button.
         self.btn_evolve.setEnabled( False )
+        self.spin_evolve_iterations.setEnabled( False )
 
-        # Add a reward to all selected elements.
+        # Configure progress dialog.
+        self.progress_dialog.setRange( 0, self.spin_evolve_iterations.value()*self.population.getIndividualCount() )
+        self.progress_dialog.setValue( 0 )
+        self.progress_dialog.setVisible( True )
+
+        # Set job.
         indices = self.population_list.selectionModel().selectedRows()
+        self.evolve_thread.add_job(
+            self.spin_evolve_iterations.value(), indices )
 
-        if len(indices) > 0:
-            for index in indices:
-                self.population.getIndividual(index.row()).reward( 100 )
-        else:
-            for index in xrange(self.population.getIndividualCount()):
-                self.population.getIndividual(index).reward( randint(1,10) )
+    # Update evolution progress.
+    def update_evolution_progress( self, completed, max ):
+        self.progress_dialog.setValue( completed )
 
-        # Deselect elements.
-        self.population_list.selectionModel().clearSelection()
+    # Finish evolution process.
+    def finish_evolution( self ):
+        # Update icons.
+        for i in xrange(self.population_model.rowCount()):
+            self.population_model.update_icon(i)
+            index = self.population_list.model().index(i, 0)
+            self.population_list.selectionModel().select(index, QItemSelectionModel.Select)
+            self.population_list.selectionModel().select(index, QItemSelectionModel.Deselect)
 
-        # Finish evaluation.
-        self.experiment.finishEvaluations()
-
-        # Get next generation.
-        if not repaint:
-            self.get_next_generation( repaint=False )
-        else:
-            self.get_next_generation()
+        # Close dialog.
+        self.progress_dialog.setVisible( False )
 
         # Reenable evolve button.
+        self.spin_evolve_iterations.setEnabled( True )
         self.btn_evolve.setEnabled( True )
-
-    def evolve_or_search(self):
-        #get the selected rows,yeah I know twice
-        indices = self.population_list.selectionModel().selectedRows()
-
-        if(len(indices) > 0):
-            self.evolve_image()
-        else:
-            numGens = QInputDialog.getInt(self,'Number of Generations','numGens')
-            for i in xrange(numGens[0] - 1):
-                self.evolve_image( repaint=False )
-                self.evolve_image()
-
 
     def handle_context_menu( self, point ):
         # Show the context menu if items are selected.
@@ -312,25 +342,25 @@ class Window(QMainWindow):
                         distorted_image = QImage( distorted_image_map )
                         distorted_image.save( index_file_name )
                         print "Done."
-                    else:
-                        print "Save image(s): Canceled"
+                else:
+                    print "Save image(s): Canceled"
 
             # Save the selected networks.
-        elif action ==  self.image_menu_save_network:
-            file_name = QFileDialog.getSaveFileName(
-                self,
-                "Save Network(s) as...", "",
-                "XML File (*.xml)" );
-            if file_name:
-                if file_name.length() - file_name.lastIndexOf('.xml', -1, Qt.CaseInsensitive) == 4:
-                    file_name.chop( 4 )
-                print "Save network(s) to: %s" % file_name
-                for index in indices:
-                    index_file_name = "%s_%d.xml" % (file_name, index.row())
-                    print " - Saving network: %s..." % (index_file_name),
-                    sys.stdout.flush()
-                    self.population.getIndividual(index.row()).saveToFile(
-                        str(index_file_name), False )
-                    print "Done."
+            elif action ==  self.image_menu_save_network:
+                file_name = QFileDialog.getSaveFileName(
+                    self,
+                    "Save Network(s) as...", "",
+                    "XML File (*.xml)" );
+                if file_name:
+                    if file_name.length() - file_name.lastIndexOf('.xml', -1, Qt.CaseInsensitive) == 4:
+                        file_name.chop( 4 )
+                    print "Save network(s) to: %s" % file_name
+                    for index in indices:
+                        index_file_name = "%s_%d.xml" % (file_name, index.row())
+                        print " - Saving network: %s..." % (index_file_name),
+                        sys.stdout.flush()
+                        self.population.getIndividual(index.row()).saveToFile(
+                            str(index_file_name), False )
+                        print "Done."
                 else:
                     print "Save network(s): Canceled"
