@@ -8,11 +8,10 @@ N/A / awertz@knights.ucf.edu
 0. Description
 ------------------------------------------------------------------------------
 
-HyperNEAT and evolutionary computation are utilized in an attempt to evolve
-interesting distortions to images of faces that are applicable despite any
-projective transformation due to the camera or pose and applicable to faces in
-general despite differences in dimensions, proportions, shade, etc. between
-individuals.
+CPPNs are utilized to produce interesting distortions in images, specifically
+those of faces. An interactive evolutionary NEAT process is utilized along
+with some pseudo-novelty search boosting elements utilizing entropy based
+search heuristics.
 
 1. LICENSE
 ------------------------------------------------------------------------------
