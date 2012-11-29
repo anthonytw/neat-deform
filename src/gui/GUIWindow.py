@@ -243,7 +243,7 @@ class Window(QMainWindow):
         self.experiment.finishEvaluations()
 
         # Get next generation.
-	if not self.repaint:
+	if not repaint:
             self.get_next_generation( repaint=False )
 	else:
             self.get_next_generation()
