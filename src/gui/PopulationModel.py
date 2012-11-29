@@ -37,10 +37,10 @@ class DummyNetwork:
             ret_val = self.x_in
             if self.network_type == DummyNetwork.HFlip:
                 ret_val = -ret_val
-        elif name == 'YOUT':
-            ret_val = self.y_in
-            if self.network_type == DummyNetwork.VFlip:
-                ret_val = -ret_val
+            elif name == 'YOUT':
+                ret_val = self.y_in
+                if self.network_type == DummyNetwork.VFlip:
+                    ret_val = -ret_val
 
         if self.network_type == DummyNetwork.Flip:
             return -ret_val
@@ -118,10 +118,10 @@ class PopulationItem:
                     y_out = 0.0
                 elif y_out > image.height() - 1:
                     y_out = image.height() - 1
-                if x_out < 0.0:
-                    x_out = 0.0
-                elif x_out > image.width() - 1:
-                    x_out = image.width() - 1
+                    if x_out < 0.0:
+                        x_out = 0.0
+                    elif x_out > image.width() - 1:
+                        x_out = image.width() - 1
 
                 # Determine row and column pixels and weights.
                 x_o1 = int(x_out)
@@ -153,11 +153,11 @@ class PopulationItem:
 
     def get_icon( self ):
         return QVariant() if self.icon == None else self.icon
-    
+
     def calculate_entropy(self, image):
         image = inner(image, [299, 587, 114]) / 1000
         return (image - image.mean()) / image.std()
-    
+
 # A simple class for handling a population model.
 class PopulationModel(QAbstractListModel):
     def __init__( self, population_size, parent = None ):
@@ -174,7 +174,7 @@ class PopulationModel(QAbstractListModel):
 
     def update_item( self, index, network = None ):
         self.population[index].update_distortion( self.original_image, network )
-        
+
     def image_entropy(self,index):
         return self.population[index].entropy
 
@@ -184,7 +184,7 @@ class PopulationModel(QAbstractListModel):
 
     def rowCount( self, parent = QModelIndex() ):
         return len(self.population)
-    
+
     def correlate_image(self, image_entropy1, image_entropy2):
         return correlate2d(image_entropy1, image_entropy2, mode='same').max()
 
