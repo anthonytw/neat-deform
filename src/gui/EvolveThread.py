@@ -1,6 +1,8 @@
 from PyQt4.QtCore import *
 from random import randint
 
+import matplotlib.pyplot as plt
+
 # A thread to handle image evolution.
 class EvolveThread(QThread):
 
@@ -21,6 +23,7 @@ class EvolveThread(QThread):
         # Initialize job parameters.
         self.job = 0
         self.selection = []
+        self.cross_correlate = False
 
     # Run the thread.
     def run( self ):
@@ -57,17 +60,21 @@ class EvolveThread(QThread):
                 break
 
     # Execute an iteration.
-    def execute_iteration( self, iteration_id, max_iteration, selection ):
+    def execute_iteration(
+        self,
+        iteration_id,
+        max_iteration,
+        selection ):
         print "  - EvolveThread:exec: iter[%d] selection: " % iteration_id,
         print selection
 
         # Assign reward to selection (or random reward if none are selected).
         if len(selection) > 0:
             for index in selection:
-                self.parent().population.getIndividual(index).reward( 100 )
+                self.parent().population.getIndividual(index).reward( randint(80,120) )
         else:
             for index in xrange(self.parent().population.getIndividualCount()):
-                self.parent().population.getIndividual(index).reward( randint(1,10) )
+                self.parent().population.getIndividual(index).reward( randint(10,40) )
 
         # Finish evaluations.
         self.parent().experiment.finishEvaluations()
@@ -81,20 +88,45 @@ class EvolveThread(QThread):
         if self.parent().population.getIndividualCount() != self.parent().population_model.rowCount():
             print "WARNING: Discrepency between population size and model size! Things might blow up. Wear a hardhat."
 
+        # Reset image cache every generation.
+        image_cache = []
+
         rows = self.parent().population_model.rowCount()
         update_index = iteration_id * rows + 1
         max_update_index = max_iteration * rows
+        selection = []
         for i in xrange(rows):
             print " - Updating network %2d with new network..." % i,
             index = self.parent().population_list.model().index(i, 0)
 
-            # ATW: TODO: As long as entropy is not being used to drive the evolution,
-            # this stuff doesn't need to be calculated except for the last run.
-            if (iteration_id + 1) == max_iteration:
+            # If performing cross-correlation or on the last iteration, update network.
+            if self.cross_correlate or ((iteration_id + 1) == max_iteration):
                 individual = self.parent().population.getIndividual(i)
                 network = individual.spawnFastPhenotypeStack()
                 self.parent().population_model.update_item(i, network)
+
+            # Perform cross correlation with cached images. Do not perform on the last
+            # iteration because the selection is not being updated.
+            if self.cross_correlate and ((iteration_id + 1) < max_iteration):
                 entropy = self.parent().population_model.image_entropy(i)
+                similar_image_found = False
+                for [ref_entropy, ref_autocorr] in image_cache:
+                    crosscorr = self.parent().population_model.correlate_image(entropy, ref_entropy)
+                    simrange = (0.6*ref_autocorr, 1.2*ref_autocorr)
+                    print "   - - ccor: %.4f; acor: %.4f simrange: " % (crosscorr, ref_autocorr),
+                    print simrange
+                    if (crosscorr >= simrange[0]) and (crosscorr <= simrange[1]):
+                        similar_image_found = True
+                        break
+
+                # No similar image found?
+                if not similar_image_found:
+                    autocorr = self.parent().population_model.correlate_image(entropy, entropy)
+                    image_cache.append( [entropy, autocorr] )
+                    selection.append( i )
+                    print "- Found unique"
+                else:
+                    print "- Found similar"
 
             print "Done"
 
@@ -102,19 +134,17 @@ class EvolveThread(QThread):
             self.update_progress.emit( update_index, max_update_index )
             update_index += 1
 
-        # ATW: TODO: This should return either an empty set (so all selections are
-        # weighted "randomly") or it should return the best elements to move forward
-        # (based on features, entropy, etc).
-        return []
+        return selection
 
     # Add job to workflow.
-    def add_job( self, iterations, selection ):
+    def add_job( self, iterations, selection, cross_correlate = False ):
         # Handle mutex lock / unlock.
         job_locker = QMutexLocker( self.job_mutex )
 
         # Add job.
         self.job = iterations
         self.selection = []
+        self.cross_correlate = cross_correlate
         if len(selection) > 0:
             # If a selection is sent in, for only one iteration.
             self.job = 1

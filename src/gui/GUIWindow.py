@@ -127,9 +127,13 @@ class Window(QMainWindow):
         self.spin_evolve_iterations.setRange( 1, 100 )
         self.spin_evolve_iterations.setValue( 1 )
 
+        self.cb_cross_correlate = QCheckBox( "X-Corr" )
+        self.cb_cross_correlate.setChecked( True )
+
         control_layout = QHBoxLayout()
         control_layout.addWidget( btn_evolve )
         control_layout.addWidget( self.spin_evolve_iterations )
+        control_layout.addWidget( self.cb_cross_correlate )
 
         # Initialize vertical central layout.
         central_layout = QVBoxLayout()
@@ -230,62 +234,12 @@ class Window(QMainWindow):
             self.spin_evolve_iterations.setEnabled( True )
             self.btn_evolve.setText('Shuffle')
 
-#    # Get next generation.
-#    def get_next_generation( self, initializing = False, repaint = True ):
-#
-#        if not initializing:
-#            print "WARNING! get_next_generation used while not initializing! OMFG"
-#            return
-#            self.experiment.produceNextGeneration()
-#
-#        self.experiment.preprocessPopulation()
-#        self.population = self.experiment.pythonEvaluationSet()
-#
-#        indices = self.population_list.selectionModel().selectedRows()
-#
-#        # Update population model.
-#        if self.population.getIndividualCount() != self.population_model.rowCount():
-#            print "WARNING! Discrepency between population size and model size! Things might blow up. Wear a hardhat."
-#
-#        for i in xrange(self.population_model.rowCount()):
-#            print "Updating network %2d with new network..." % i,
-#            index = self.population_list.model().index(i, 0)
-#
-#            if repaint:
-#                self.population_list.selectionModel().select(index, QItemSelectionModel.Select)
-#
-#            individual = self.population.getIndividual(i)
-#            network = individual.spawnFastPhenotypeStack()
-#            while True:
-#                self.population_model.update_item(i, network)
-#                self.population_model.update_icon(i)
-#                entropy = self.population_model.image_entropy(i)
-#                if i in indices:
-#                    # Check if image is already in storage
-#                    if entropy not in self.image_storage:
-#                        self.image_storage.append(entropy)
-#                        break
-#                else:
-#                    similar_found = False
-#                    # Is within 5% of anything else in the list
-#                    for value in self.image_storage:
-#                        similarity_value_outside = self.population_model.correlate_image(value,entropy)
-#                        similarity_value_self = self.population_model.correlate_image(value,value)
-#                        if (similarity_value_self*.9 <= similarity_value_outside) and (similarity_value_self*1.1 >= similarity_value_outside):
-#                            similar_found = True
-#                            break
-#                    if not similar_found:
-#                        break
-#
-#            if repaint:
-#                self.population_list.selectionModel().select(index, QItemSelectionModel.Deselect)
-#            print "Done"
-
     # Evolve the image with the selected individuals.
     def evolve_image( self ):
         # Disable evolve button.
         self.btn_evolve.setEnabled( False )
         self.spin_evolve_iterations.setEnabled( False )
+        self.cb_cross_correlate.setEnabled( False )
 
         # Configure progress dialog.
         self.progress_dialog.setRange( 0, self.spin_evolve_iterations.value()*self.population.getIndividualCount() )
@@ -295,10 +249,13 @@ class Window(QMainWindow):
         # Set job.
         indices = self.population_list.selectionModel().selectedRows()
         self.evolve_thread.add_job(
-            self.spin_evolve_iterations.value(), indices )
+            self.spin_evolve_iterations.value(), indices,
+            self.cb_cross_correlate.isChecked() )
 
     # Update evolution progress.
     def update_evolution_progress( self, completed, max ):
+        if self.progress_dialog.maximum() != max:
+            self.progress_dialog.setMaximum( max )
         self.progress_dialog.setValue( completed )
 
     # Finish evolution process.
@@ -314,6 +271,7 @@ class Window(QMainWindow):
         self.progress_dialog.setVisible( False )
 
         # Reenable evolve button.
+        self.cb_cross_correlate.setEnabled( True )
         self.spin_evolve_iterations.setEnabled( True )
         self.btn_evolve.setEnabled( True )
 

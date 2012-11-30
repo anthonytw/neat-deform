@@ -1,10 +1,12 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from scipy import *
+from scipy.signal import *
 import cStringIO
 import Image
 import os
 import sys
+import util.tools
 
 # Represents a dummy network for testing.
 class DummyNetwork:
@@ -81,7 +83,6 @@ class PopulationItem:
         strio.seek( 0 )
         pil_image = Image.open( strio )
         pil_image.load()
-        self.entropy = self.calculate_entropy(pil_image)
         image_chan_i = pil_image.split()
         image_chan = [
             image_chan_i[0].load(),
@@ -147,6 +148,8 @@ class PopulationItem:
                 distorted_image.setPixel(
                     x, y, qRgb(p[0], p[1], p[2]) )
 
+        distorted_pil_image = util.tools.convertQ2PIL( distorted_image )
+        self.entropy = self.calculate_entropy( distorted_pil_image )
         return distorted_image
 
     def get_distorted_image( self ):
@@ -155,9 +158,17 @@ class PopulationItem:
     def get_icon( self ):
         return QVariant() if self.icon == None else self.icon
 
-    def calculate_entropy(self, image):
-        image = inner(image, [299, 587, 114]) / 1000
-        return (image - image.mean()) / image.std()
+    # Determines the perceived brightness of each pixel.
+    # This is based on http://www.nbdtech.com/Blog/archive/2008/04/27/Calculating-the-Perceived-Brightness-of-a-Color.aspx
+    # and http://alienryderflex.com/hsp.html
+    # which apparently gives a better brightness indicator than the W3C method.
+    #
+    # @param image Expects a PIL image.
+    # @return Returns the normalized brightness matrix.
+    def calculate_entropy( self, image ):
+        image_array = util.tools.PIL2array( image )
+        image_array = sqrt(inner((image_array/255.0)**2, [0.241, 0.691, 0.068]))
+        return (image_array - image_array.mean()) / image_array.std()
 
 # A simple class for handling a population model.
 class PopulationModel(QAbstractListModel):
@@ -190,8 +201,8 @@ class PopulationModel(QAbstractListModel):
     def rowCount( self, parent = QModelIndex() ):
         return len(self.population)
 
-    def correlate_image(self, image_entropy1, image_entropy2):
-        return correlate2d(image_entropy1, image_entropy2, mode='same').max()
+    def correlate_image( self, image_entropy_1, image_entropy_2 ):
+        return fftconvolve(image_entropy_1, image_entropy_2[::-1,::-1], mode='same').max()
 
     def data( self, index, role ):
         if (not index.isValid()) or (index.row() >= self.population_size):
