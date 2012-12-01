@@ -1,0 +1,81 @@
+<Genetics ActualRandomSeed="218611137" NodeCounter="193" LinkCounter="511" SpeciesCounter="249" AddBiasToHiddenNodes="0.00000000000000000000" AdultLinkAge="18.00000000000000000000" AgeSignificance="1.00000000000000000000" AllowAddNodeToRecurrentConnection="0.00000000000000000000" AllowRecurrentConnections="1.00000000000000000000" AllowSelfRecurrentConnections="1.00000000000000000000" CompatibilityModifier="0.30000001192092895508" CompatibilityThreshold="12.30000025033950805664" DisjointCoefficient="2.00000000000000000000" DropoffAge="15.00000000000000000000" ExcessCoefficient="2.00000000000000000000" ExperimentType="31.00000000000000000000" ExtraActivationFunctions="1.00000000000000000000" ExtraActivationUpdates="1.00000000000000000000" FitnessCoefficient="0.00000000000000000000" ForceCopyGenerationChampion="1.00000000000000000000" GenerationDumpModulo="10.00000000000000000000" LinkGeneMinimumWeightForPhentoype="0.00000000000000000000" MaxGenerations="600000.00000000000000000000" MutateAddLinkProbability="0.15000000596046447754" MutateAddNodeProbability="0.20000000298023223877" MutateDemolishLinkProbability="0.00000000000000000000" MutateLinkProbability="0.10000000149011611938" MutateLinkWeightsProbability="0.89999997615814208984" MutateOnlyProbability="0.25000000000000000000" MutateSpeciesChampionProbability="0.00000000000000000000" MutationPower="1.50000000000000000000" OnlyGaussianHiddenNodes="0.00000000000000000000" PopulationSize="1.00000000000000000000" RandomSeed="-1.00000000000000000000" SignedActivation="1.00000000000000000000" SmallestSpeciesSizeWithElitism="5.00000000000000000000" SpeciesSizeTarget="8.00000000000000000000" SurvivalThreshold="0.20000000298023223877" WeightDifferenceCoefficient="1.00000000000000000000">
+    <GeneticGeneration GenNumber="1" UserData="" AverageFitness="0" SpeciesCount="1">
+        <Individual Fitness="0.00000000000000000000" SpeciesID="0" UserData="">
+            <Nodes>
+                <Node ID="0" Enabled="1" Name="Bias" Type="NetworkSensor" DrawingPosition="0.00000000000000000000" TopologyFrozen="0" ActivationFunction="0" />
+                <Node ID="1" Enabled="1" Name="X" Type="NetworkSensor" DrawingPosition="0.00000000000000000000" TopologyFrozen="0" ActivationFunction="0" />
+                <Node ID="2" Enabled="1" Name="Y" Type="NetworkSensor" DrawingPosition="0.00000000000000000000" TopologyFrozen="0" ActivationFunction="0" />
+                <Node ID="3" Enabled="1" Name="XOUT" Type="NetworkOutputNode" DrawingPosition="1.00000000000000000000" TopologyFrozen="0" ActivationFunction="0" />
+                <Node ID="4" Enabled="1" Name="YOUT" Type="NetworkOutputNode" DrawingPosition="1.00000000000000000000" TopologyFrozen="0" ActivationFunction="0" />
+                <Node ID="6" Enabled="1" Name="" Type="HiddenNode" DrawingPosition="0.50000000000000000000" TopologyFrozen="0" ActivationFunction="6" />
+                <Node ID="14" Enabled="1" Name="" Type="HiddenNode" DrawingPosition="0.50000000000000000000" TopologyFrozen="0" ActivationFunction="1" />
+                <Node ID="48" Enabled="1" Name="" Type="HiddenNode" DrawingPosition="0.75000000000000000000" TopologyFrozen="0" ActivationFunction="3" />
+                <Node ID="61" Enabled="1" Name="" Type="HiddenNode" DrawingPosition="0.50000000000000000000" TopologyFrozen="0" ActivationFunction="6" />
+                <Node ID="68" Enabled="1" Name="" Type="HiddenNode" DrawingPosition="0.50000000000000000000" TopologyFrozen="0" ActivationFunction="3" />
+                <Node ID="78" Enabled="1" Name="" Type="HiddenNode" DrawingPosition="0.50000000000000000000" TopologyFrozen="0" ActivationFunction="3" />
+                <Node ID="93" Enabled="1" Name="" Type="HiddenNode" DrawingPosition="0.75000000000000000000" TopologyFrozen="0" ActivationFunction="1" />
+                <Node ID="98" Enabled="1" Name="" Type="HiddenNode" DrawingPosition="0.62500000000000000000" TopologyFrozen="0" ActivationFunction="0" />
+                <Node ID="129" Enabled="1" Name="" Type="HiddenNode" DrawingPosition="0.25000000000000000000" TopologyFrozen="0" ActivationFunction="6" />
+                <Node ID="136" Enabled="1" Name="" Type="HiddenNode" DrawingPosition="0.87500000000000000000" TopologyFrozen="0" ActivationFunction="0" />
+                <Node ID="139" Enabled="1" Name="" Type="HiddenNode" DrawingPosition="0.68750000000000000000" TopologyFrozen="0" ActivationFunction="6" />
+                <Node ID="143" Enabled="1" Name="" Type="HiddenNode" DrawingPosition="0.50000000000000000000" TopologyFrozen="0" ActivationFunction="3" />
+                <Node ID="147" Enabled="1" Name="" Type="HiddenNode" DrawingPosition="0.68750000000000000000" TopologyFrozen="0" ActivationFunction="0" />
+                <Node ID="152" Enabled="1" Name="" Type="HiddenNode" DrawingPosition="0.65625000000000000000" TopologyFrozen="0" ActivationFunction="0" />
+                <Node ID="156" Enabled="1" Name="" Type="HiddenNode" DrawingPosition="0.71875000000000000000" TopologyFrozen="0" ActivationFunction="1" />
+                <Node ID="191" Enabled="1" Name="" Type="HiddenNode" DrawingPosition="0.25000000000000000000" TopologyFrozen="0" ActivationFunction="0" />
+            </Nodes>
+            <Links>
+                <Link ID="0" Enabled="1" fromNode="0" toNode="3" weight="0.38703880192182604780" fixed="0" />
+                <Link ID="1" Enabled="1" fromNode="0" toNode="4" weight="-0.08173132912942460138" fixed="0" />
+                <Link ID="2" Enabled="1" fromNode="1" toNode="3" weight="3.50422411455643478817" fixed="0" />
+                <Link ID="3" Enabled="1" fromNode="1" toNode="4" weight="-2.53842857054777626402" fixed="0" />
+                <Link ID="4" Enabled="1" fromNode="2" toNode="3" weight="-0.76811216014537153640" fixed="0" />
+                <Link ID="5" Enabled="1" fromNode="2" toNode="4" weight="-0.30537921301417070286" fixed="0" />
+                <Link ID="6" Enabled="1" fromNode="3" toNode="3" weight="2.88957513359237783135" fixed="0" />
+                <Link ID="7" Enabled="1" fromNode="3" toNode="4" weight="-2.55182078558884661845" fixed="0" />
+                <Link ID="8" Enabled="1" fromNode="4" toNode="3" weight="1.69188570438605401236" fixed="0" />
+                <Link ID="9" Enabled="1" fromNode="4" toNode="4" weight="4.13186367430978584991" fixed="0" />
+                <Link ID="12" Enabled="1" fromNode="2" toNode="6" weight="-2.83117968715660506263" fixed="0" />
+                <Link ID="13" Enabled="1" fromNode="6" toNode="3" weight="-2.92966343352425706570" fixed="0" />
+                <Link ID="22" Enabled="1" fromNode="6" toNode="6" weight="1.29175678328345289181" fixed="0" />
+                <Link ID="29" Enabled="1" fromNode="0" toNode="14" weight="5.00000000000000000000" fixed="0" />
+                <Link ID="30" Enabled="1" fromNode="14" toNode="4" weight="0.80904301330243200141" fixed="0" />
+                <Link ID="72" Enabled="1" fromNode="14" toNode="6" weight="-1.43280558601881624625" fixed="0" />
+                <Link ID="84" Enabled="1" fromNode="14" toNode="3" weight="-2.50558086712111860450" fixed="0" />
+                <Link ID="124" Enabled="1" fromNode="14" toNode="48" weight="-1.54953766537316672824" fixed="0" />
+                <Link ID="125" Enabled="1" fromNode="48" toNode="4" weight="-3.53170356478092006824" fixed="0" />
+                <Link ID="157" Enabled="1" fromNode="2" toNode="61" weight="-1.30072644708053664075" fixed="0" />
+                <Link ID="158" Enabled="1" fromNode="61" toNode="3" weight="3.89120921213117298976" fixed="0" />
+                <Link ID="176" Enabled="1" fromNode="1" toNode="68" weight="1.74525665503923654853" fixed="0" />
+                <Link ID="177" Enabled="1" fromNode="68" toNode="4" weight="-5.00000000000000000000" fixed="0" />
+                <Link ID="204" Enabled="1" fromNode="1" toNode="78" weight="2.92459860651563641198" fixed="0" />
+                <Link ID="205" Enabled="1" fromNode="78" toNode="3" weight="-0.14306351707665154738" fixed="0" />
+                <Link ID="236" Enabled="1" fromNode="0" toNode="48" weight="-0.75813490618306045299" fixed="0" />
+                <Link ID="239" Enabled="1" fromNode="78" toNode="93" weight="5.00000000000000000000" fixed="0" />
+                <Link ID="240" Enabled="1" fromNode="93" toNode="3" weight="-1.59346861904878656091" fixed="0" />
+                <Link ID="249" Enabled="1" fromNode="14" toNode="98" weight="-1.31242317347914871917" fixed="0" />
+                <Link ID="250" Enabled="1" fromNode="98" toNode="48" weight="3.31919130511739535194" fixed="0" />
+                <Link ID="265" Enabled="1" fromNode="48" toNode="98" weight="1.33874598339465666896" fixed="0" />
+                <Link ID="328" Enabled="1" fromNode="2" toNode="129" weight="-4.62381573699199233118" fixed="0" />
+                <Link ID="329" Enabled="1" fromNode="129" toNode="6" weight="2.70250765001006776345" fixed="0" />
+                <Link ID="343" Enabled="1" fromNode="48" toNode="136" weight="5.00000000000000000000" fixed="0" />
+                <Link ID="344" Enabled="1" fromNode="136" toNode="4" weight="0.55664226067655075969" fixed="0" />
+                <Link ID="349" Enabled="1" fromNode="98" toNode="139" weight="1.99164551888701568672" fixed="0" />
+                <Link ID="350" Enabled="1" fromNode="139" toNode="48" weight="-1.72969104547841068253" fixed="0" />
+                <Link ID="360" Enabled="1" fromNode="2" toNode="143" weight="3.01399501327391483585" fixed="0" />
+                <Link ID="361" Enabled="1" fromNode="143" toNode="3" weight="5.00000000000000000000" fixed="0" />
+                <Link ID="374" Enabled="1" fromNode="98" toNode="147" weight="5.00000000000000000000" fixed="0" />
+                <Link ID="375" Enabled="1" fromNode="147" toNode="48" weight="5.00000000000000000000" fixed="0" />
+                <Link ID="390" Enabled="1" fromNode="98" toNode="152" weight="1.18678771008176564550" fixed="0" />
+                <Link ID="391" Enabled="1" fromNode="152" toNode="139" weight="4.32285724790073278001" fixed="0" />
+                <Link ID="392" Enabled="1" fromNode="143" toNode="61" weight="-2.14567318565571030220" fixed="0" />
+                <Link ID="397" Enabled="1" fromNode="4" toNode="129" weight="3.82295999371599881655" fixed="0" />
+                <Link ID="402" Enabled="1" fromNode="147" toNode="156" weight="-4.81460067052447726610" fixed="0" />
+                <Link ID="403" Enabled="1" fromNode="156" toNode="48" weight="5.00000000000000000000" fixed="0" />
+                <Link ID="440" Enabled="1" fromNode="129" toNode="78" weight="0.60504877232864562320" fixed="0" />
+                <Link ID="501" Enabled="1" fromNode="2" toNode="191" weight="-0.43522988444350785286" fixed="0" />
+                <Link ID="502" Enabled="1" fromNode="191" toNode="143" weight="-0.04808437574124968528" fixed="0" />
+            </Links>
+        </Individual>
+    </GeneticGeneration>
+</Genetics>
