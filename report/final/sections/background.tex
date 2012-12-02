@@ -1,1 +1,55 @@
-Insert resume here
+Neural Networks first appeared in literature as early as the 1960's, but until NEAT was introduced a user had to manually 
+estimate the number of nodes needed to solve the proper and how these nodes were connected. In addition the network required
+retraining every time new data was presented and failed to properly react to a changing objective function. These issues were
+solved with the introduction of NEAT in 2002 \cite{stanley2002evolving}. NEAT evolves not only the weights of a network but
+the placement of linkages and nodes inside of the network. This process is governed by a memorization genetic algorithm that 
+seeks to optimize a user's fitness function. The major advantage of this system is the protection of innovation via speciation.
+Speciation allows novel structures to survive long enough to eventually find a more optimal solution to the user's problem. 
+This is important to the facial deformation problem as novel facial structures would be lost in any algorithm that vigoursly
+explores the search space. Introducing the concept of speciation along with fitness sharing smooths out search space and 
+allows semi-guided search to take place. The biggest issue with NEAT is that it still requires some user input in the form
+of an objective. This domain input is needed in order for NEAT to decide if a structure is more correct than another, but 
+this function describing images is currently not known. 
+
+\begin{figure}
+ \centering
+ \label{fig:paper:CPNN}
+ \includegraphics[height=1.5in,width=1.5in]{../../rec/paper/CPNN.png}
+ \caption{CPNN Graph Abstraction} A graph abstraction of a compositional pattern producing neural network. The CPNN abstraction
+ can be applied to a neural network type structure as the graph depicts \cite{stanley2002evolving}
+\end{figure}
+
+Due to the limitations of the NEAT process a second abstraction must be introduced in order to properly solve the facial 
+deformation problem. CPNNs or Compositional Pattern Producing Networks are indirect encoded developmental networks that 
+describe in a minimal set how something is created \cite{stanley2007compositional}. CPNNs eliminate two limitations the first
+being a uniform activation function, and the second is sampling among a continuum rather than discrete points. Because CPNNs 
+describe how a function evolves rather than how to evaluate a function CPNNs represent a different structure then that of 
+artificial neural networks but one that can utilize the same structure of the networks \ref{fig:paper:CPNN}. The combination
+of NEAT with the CPNN abstraction allows for greater ability to come up with a generational model for how a function develops
+\cite{stanley2007compositional}.This process also allows for simplification of the fitness sharing metric involved in speciation
+of the neural networks.In-lieu of a domain restricted optimization function the distance between the two networks can be used
+to properly speciate the evolved networks \cite{stanley2007compositional}. Another fortuitous advantage of the algorithm is due
+to the domain of images, as most images change in resolution and density more input neurons are not required as would be under
+traditional neural network architectures. The CPNN ignores the resolution of the image and can generalize how the image is produced
+thus saving valuable computational time.In addition, the process of including symmetrical activation functions with a generative process 
+allows exclusion of large amounts of the search space allowing more efficient search for interesting artifacts. To this end the CPNN/NEAT
+architecture allows interesting facial deformations to be discovered by the user in a timely and rigorous manner.
+
+\begin{figure*}
+ \centering
+ \label{fig:paper:picbreed}
+ \includegraphics[height = 4in, width = 5in]{../../rec/paper/picbreed.jpg}
+ \caption{PicBreeder} A graph abstraction of a compositional pattern producing neural network. The CPNN abstraction
+ can be applied to a neural network type structure as the graph depicts \cite{stnaleypicbreed}
+\end{figure*}
+
+There still exists a issue to implementation of the algorithm and that is the objective function.Interestingness of a Human face is 
+difficult to express in mathematical terms. Due to this limitation evolving interesting deformations with CPNN/NEAT is impossible.
+There exists another abstraction that of Interactive Evolutionary Computation or IEC, IEC supplements a mathematical objective function
+for one driven by a Human operator.Instead of performing a straight optimization route on images, Humans perform a meta-heuristic like search of the novel
+spaces which encodes the optimal function this performs a search for interesting or novel entires \cite{lehman2010efficiently} \cite{li2009innovative}.  The CPNN/NEAT architecture has already been applied 
+successfully to this domain with the inclusion of IEC \cite{secretan2008picbreeder}. PicBreeder allows for anyone with an Internet connection to evolve images from simple functions
+into genetic art. The users of the site effectively perform a modified Gibbs sampling algorithm on the search space of interesting images.
+This gives the PicBreeder program insight into the higher dimensional fitness function will still allowing CPNN/NEAT to evolve the underlaying
+image representation. PicBreeder becomes a lesson in how to efficiently search through possible images, and its process becomes a cornerstone
+of the facial deformation discovery process.
