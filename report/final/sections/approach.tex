@@ -1,6 +1,6 @@
-The CPNN/NEAT architecture is at the forefront of the facial deformation discovery process. The architecture takes 
+The CPPN/NEAT architecture is at the forefront of the facial deformation discovery process. The architecture takes 
 advantage of developed software suites most notably HyperNEAT C++ \cite{jasongauci}. HyperNEAT C++ is a complete
-version of NEAT, CPNN/NEAT and HyperNEAT that was suited to prove the validity of the HyperNEAT platform. 
+version of NEAT, CPPN/NEAT and HyperNEAT that was suited to prove the validity of the HyperNEAT platform. 
 Extensions to this original program had to be made in order to tailor it to the field of facial deformations. 
 HyperNEAT C++ was extended with the Python programming language in order to create easier accessibility to the
 underlying algorithmic process. The architecture presented in this paper is simple and allows for quick 
@@ -8,22 +8,19 @@ evaluation of image novelty by the user. The simple architecture \ref{fig:paper:
 processing of information in order to process not only static images but videos and allows expansion to
 include more complex deformations including non Human faces.
 
+\begin{figure}
+    \centering
+    \label{fig:paper:interface}
+    \includegraphics[width=0.4\textwidth]{../../rec/paper/interface.png}
+    \caption{User interface for interactive evolution.}
+\end{figure}
 
 \begin{figure*}
-   \centering
-    \subfigure[]{
-        \centering
-        \label{fig:paper:architecture}
-        \includegraphics[height = 4in, width = 3in]{../../rec/paper/Face Deformations Architecture.png}
-    }
-    \subfigure[]{
-       \label{fig:paper:interface}
-        \includegraphics[height = 4in, width = 5in]{../../rec/paper/interface.png}
-    }
-    \caption{Facial deformations architecture and user interface for interactive evolution.}
+    \centering
+    \label{fig:paper:architecture}
+    \includegraphics[width=0.6\textwidth]{../../rec/paper/architecture.png}
+    \caption{Facial deformations architecture.}
 \end{figure*}
-
-
 
 The major issues with the architecture became obvious when running, the most glaring issue was that of user fatigue.
 Cited in many major publications user fatigue is the anomaly that occurs when users are presented with a long search process
@@ -61,6 +58,3 @@ was considered junk due to the randomness. Having a smooth random fitness functi
 have a chance to become complex while stopping confusion as the fitness gradually levels off with time rather than be subject to computational
 randomness. The complexification of these initial functions allows for user fatigue to be further curtailed and the novel facial 
 deformations to be discovered by the user.
-
-
-
