@@ -1,4 +1,4 @@
-from PyQt4.QtCore import *
+from PyQt5.QtCore import *
 from random import randint
 
 import matplotlib.pyplot as plt

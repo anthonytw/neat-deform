@@ -1,5 +1,6 @@
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 import os.path
 import sys
 import PyHyperNEAT as neat
@@ -61,7 +62,7 @@ class Window(QMainWindow):
 
         # Context menu.
         lv.setContextMenuPolicy( Qt.CustomContextMenu )
-        lv.connect( lv, SIGNAL('customContextMenuRequested (const QPoint&)'), self.handle_context_menu )
+        lv.customContextMenuRequested.connect(self.handle_context_menu)
 
         # Create the population model.
         pm = PopulationModel( population_size )
@@ -71,15 +72,12 @@ class Window(QMainWindow):
             self.population_model.update_item( i, DummyNetwork( i % 4 + 1 ) )
 
         # Monitor population list selection changes.
-        self.connect(
-            lv.selectionModel(),
-            SIGNAL('selectionChanged(const QItemSelection &, const QItemSelection &)'),
-            self.handle_listview_change )
+        lv.selectionModel().selectionChanged.connect(self.handle_listview_change )
 
         # Initialize widgets for displaying the graphic and for choosing
         # a new base image.
         btn_select_image = QPushButton( "Load Image" )
-        self.connect( btn_select_image, SIGNAL('released()'), self.select_image )
+        btn_select_image.released.connect(self.select_image)
         lbl_image = QLabel( "Nothing loaded" )
         lbl_image.setFixedSize( 120, 120 )
         self.original_image_label = lbl_image
@@ -92,10 +90,10 @@ class Window(QMainWindow):
         gb.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Expanding )
 
         tw = QTableWidget( 1, 2 )
-        tw.setHorizontalHeaderLabels(QString("Parameter;Value").split(';'))
+        tw.setHorizontalHeaderLabels("Parameter;Value".split(';'))
         tw.setColumnWidth( 0, 350 )
         tw.horizontalHeader().setStretchLastSection( True )
-        self.connect( tw, SIGNAL('itemChanged(QTableWidgetItem *)'), self.handle_parameter_change )
+        tw.itemChanged.connect(self.handle_parameter_change)
         self.parameter_table = tw
 
         tw_layout = QVBoxLayout()
@@ -118,7 +116,7 @@ class Window(QMainWindow):
 
         # Initialize a horizontal layout for the evolve button.
         btn_evolve = QPushButton( "Shuffle" )
-        self.connect( btn_evolve, SIGNAL('released()'), self.evolve_image )
+        btn_evolve.released.connect(self.evolve_image)
         btn_evolve.setEnabled( False )
         self.btn_evolve = btn_evolve
         self.btn_evolve.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Preferred )
@@ -195,16 +193,17 @@ class Window(QMainWindow):
             row = parameter.row()
             parameter_name = self.globals.getParameterName( row )
             current_value = self.globals.getParameterValue( parameter_name )
-            (new_value, is_a_float) = parameter.data(Qt.EditRole).toFloat()
-            if is_a_float:
-                self.globals.setParameterValue( parameter_name, new_value )
+            v = parameter.data(Qt.EditRole)
+            if v.canConvert(QVariant.Double):
+                v.convert(QVariant.Double)
+                self.globals.setParameterValue(parameter_name, v.value())
             else:
-                parameter.setText( "%.2f" % current_value )
+                parameter.setText("%.2f" % current_value)
 
     # Choose a new image to work with.
     def select_image( self, file_name = None ):
         if file_name == None:
-            file_name = QFileDialog.getOpenFileName(
+            file_name, _ = QFileDialog.getOpenFileName(
                 self,
                 "Select Image", "",
                 "Image Files (*.png *.jpg *.bmp)" );
@@ -283,7 +282,7 @@ class Window(QMainWindow):
 
             # Save the selected images.
             if action == self.image_menu_save_image:
-                file_name = QFileDialog.getSaveFileName(
+                file_name, _ = QFileDialog.getSaveFileName(
                     self,
                     "Save Image(s) as...", "",
                     "PNG Image (*.png)" );
@@ -305,13 +304,11 @@ class Window(QMainWindow):
 
             # Save the selected networks.
             elif action ==  self.image_menu_save_network:
-                file_name = QFileDialog.getSaveFileName(
+                file_name, _ = QFileDialog.getSaveFileName(
                     self,
                     "Save Network(s) as...", "",
                     "XML File (*.xml)" );
                 if file_name:
-                    if file_name.length() - file_name.lastIndexOf('.xml', -1, Qt.CaseInsensitive) == 4:
-                        file_name.chop( 4 )
                     print "Save network(s) to: %s" % file_name
                     for index in indices:
                         index_file_name = "%s_%d.xml" % (file_name, index.row())

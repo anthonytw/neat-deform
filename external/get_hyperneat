@@ -5,7 +5,7 @@
 # YMMV.
 
 echo "Installing required packages..."
-#sudo apt-get install build-essential libwxgtk2.8-dev python-dev cmake libboost-thread-dev libboost-system-dev libboost-filesystem-dev libboost-program-options-dev libboost-test-dev libboost-mpi-dev libboost-python
+sudo apt-get install build-essential libwxgtk2.8-dev python-dev cmake libboost-thread-dev libboost-system-dev libboost-filesystem-dev libboost-program-options-dev libboost-test-dev libboost-mpi-dev libboost-python
 
 #####
 

@@ -1,9 +1,9 @@
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 from scipy import *
 from scipy.signal import *
 import cStringIO
-import Image
+from PIL import Image
 import os
 import sys
 import util.tools

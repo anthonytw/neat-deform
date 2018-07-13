@@ -8,7 +8,7 @@ if len( argv ) != 4:
 
 # Imports.
 import PyHyperNEAT as neat
-from PyQt4.QtGui import QApplication, QImage, QPixmap
+from PyQt5.QtGui import QApplication, QImage, QPixmap
 
 import gui.PopulationModel
 
